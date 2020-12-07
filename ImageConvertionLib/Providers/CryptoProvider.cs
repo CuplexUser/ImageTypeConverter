@@ -13,6 +13,8 @@ namespace ImageConverterLib.Providers
     {
         private readonly Guid _instanceGuid;
         private const int MaxBufferSize = 33554432; //32 Mb
+        private const int MetadataLength = 112;
+
         [SecurityCritical]
         private static readonly byte[] SaltBytes = {
             0x0C, 0xF2, 0xC4, 0x59, 0x9E, 0x8A, 0x0D, 0x92, 0x17, 0x9A, 0xC4, 0x3D, 0xC8, 0xB1, 0x90, 0xF1,
@@ -147,8 +149,9 @@ namespace ImageConverterLib.Providers
         [SecurityCritical]
         private byte[] DecryptBinaryDataInternal(ref byte[] data, ref byte[] encryptedKey, bool useExternalKey, out bool dataIsValid)
         {
-            var ms = new MemoryStream(data);
-            var msDecodedData = new MemoryStream();
+            var msDecrypted = new MemoryStream();
+            var msEncrypted = new MemoryStream(data, MetadataLength - 1, data.Length - MetadataLength);
+            var msMetadata = new MemoryStream(data, 0, MetadataLength);
 
             using (Aes aesAlg = AesCng.Create("AES"))
             {
@@ -158,7 +161,7 @@ namespace ImageConverterLib.Providers
                 if (aesAlg == null)
                 {
                     dataIsValid = false;
-                    return msDecodedData.ToArray();
+                    return null;
                 }
 
                 SHA512 hashAlg = SHA512Cng.Create("SHA512");
@@ -166,53 +169,55 @@ namespace ImageConverterLib.Providers
 
 
                 byte[] initVector = new byte[16];
-                ms.Read(initVector, 0, initVector.Length);
+                msMetadata.Read(initVector, 0, initVector.Length);
 
                 byte[] hashBuffer = new byte[64];
-                ms.Read(hashBuffer, 0, hashBuffer.Length);
+                msMetadata.Read(hashBuffer, 0, hashBuffer.Length);
 
                 byte[] entropyBytes = new byte[32];
-                ms.Read(entropyBytes, 0, entropyBytes.Length);
+                msMetadata.Read(entropyBytes, 0, entropyBytes.Length);
+
+
+                int encryptedDataLength = data.Length;
 
                 aesAlg.BlockSize = 128;
                 aesAlg.KeySize = 256;
                 aesAlg.Padding = PaddingMode.PKCS7;
                 aesAlg.Mode = CipherMode.CBC;
                 aesAlg.IV = initVector;
-                Rfc2898DeriveBytes rfc2898DeriveBytes = new Rfc2898DeriveBytes(encryptedKey, SaltBytes, 1000, HashAlgorithmName.SHA256);
+                var rfc2898DeriveBytes = new Rfc2898DeriveBytes(encryptedKey, SaltBytes, 1000, HashAlgorithmName.SHA256);
                 byte[] key = rfc2898DeriveBytes.CryptDeriveKey("AES", "SHA256", 256, aesAlg.IV);
 
                 // Create AES Crypto Transform to be used in the CryptoStream transform function 
-                ICryptoTransform cryptoTransform = aesAlg.CreateEncryptor(key, initVector);
+                ICryptoTransform cryptoTransform = aesAlg.CreateDecryptor(key, initVector);
 
                 // Create the streams used for encryption.
-                int bufferSize = (int)Math.Min(MaxBufferSize, ms.Length);
-                var buffer = new byte[bufferSize];
-                ms.Position = 0;
+                int bufferSize = Math.Min(MaxBufferSize, encryptedDataLength);
+                var plainTextBytes = new byte[bufferSize];
+
 
                 // Protect encryption Key Again
                 if (useExternalKey)
                     ProtectedMemory.Protect(encryptedKey, MemoryProtectionScope.SameProcess);
 
-                using (var csEncrypt = new CryptoStream(msDecodedData, cryptoTransform, CryptoStreamMode.Write))
+                // Create the streams used for decryption. 
+                using (var csDecrypt = new CryptoStream(msEncrypted, cryptoTransform, CryptoStreamMode.Read))
                 {
-                    int bytesRead;
-                    while ((bytesRead = ms.Read(buffer, 0, buffer.Length)) > 0)
+                    int decryptedByteCount;
+                    while ((decryptedByteCount = csDecrypt.Read(plainTextBytes, 0, plainTextBytes.Length)) > 0)
                     {
-                        csEncrypt.Write(buffer, 0, bytesRead);
+                        msDecrypted.Write(plainTextBytes, 0, decryptedByteCount);
                     }
-
-                    csEncrypt.FlushFinalBlock();
-                    msDecodedData.Flush();
                 }
 
-                byte[] validationHash = hashAlg.ComputeHash(msDecodedData);
+                byte[] validationHash = hashAlg.ComputeHash(msDecrypted);
                 dataIsValid = validationHash.AsEnumerable().SequenceEqual(hashBuffer);
                 rfc2898DeriveBytes.Dispose();
-                ms.Dispose();
+                msEncrypted.Dispose();
+                msMetadata.Dispose();
             }
 
-            return msDecodedData.ToArray();
+            return msDecrypted.ToArray();
         }
 
         private class HashComparer : IEqualityComparer<byte[]>
