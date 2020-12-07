@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
 using AutoMapper;
+using ImageConverterLib.Providers;
 using ImageConverterLib.Repository;
 using ImageConverterLib.Services;
 using Module = Autofac.Module;
@@ -32,6 +33,12 @@ namespace ImageConverterLib.Library.AutofacModules
                    .SingleInstance();
 
             builder.RegisterAssemblyTypes(typeof(RepositoryBase).Assembly)
+                   .AssignableTo<RepositoryBase>()
+                   .AsSelf()
+                   .AsImplementedInterfaces()
+                   .SingleInstance();
+
+            builder.RegisterAssemblyTypes(typeof(ProviderBase).Assembly)
                    .AssignableTo<RepositoryBase>()
                    .AsSelf()
                    .AsImplementedInterfaces()

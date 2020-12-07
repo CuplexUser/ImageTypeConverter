@@ -4,10 +4,10 @@ using System.Reflection;
 
 namespace ImageConverterLib.ConfigHelper
 {
-  public static class GlobalSettings
+    public static class GlobalSettings
     {
         public static bool Initialized => _isInitialized;
-
+        internal const string KeyName = "ImgType986ebd18-ba81-4779-b6a7-c0b5dd4a80ab"; 
         private const string UserDbFileName = "ComputedHashData.bin";
         private static string _logFileName;
         private static string _userDataPath;

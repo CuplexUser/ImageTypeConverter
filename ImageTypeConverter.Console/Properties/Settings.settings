@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ImageTypeConverter.Console.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AppDescriptionText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">***Image Type Batch Converter*** 2020</Value>
+    </Setting>
+    <Setting Name="HelpInfoText" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">For help use the argument -h</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

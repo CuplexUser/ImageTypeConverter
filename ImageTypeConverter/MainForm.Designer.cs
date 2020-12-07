@@ -104,57 +104,57 @@ namespace ImageTypeConverter
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.openToolStripMenuItem.Text = "&Open List";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.saveAsToolStripMenuItem.Text = "Save As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(164, 6);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(167, 22);
             this.toolStripMenuItem1.Text = "&Add Source Files";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(164, 6);
             // 
             // setOutputFolderToolStripMenuItem
             // 
             this.setOutputFolderToolStripMenuItem.Name = "setOutputFolderToolStripMenuItem";
-            this.setOutputFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setOutputFolderToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.setOutputFolderToolStripMenuItem.Text = "Set Output Folder";
             this.setOutputFolderToolStripMenuItem.Click += new System.EventHandler(this.setOutputFolderToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(177, 6);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(164, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -353,9 +353,9 @@ namespace ImageTypeConverter
             this.lblDestinationDir.AutoSize = true;
             this.lblDestinationDir.Location = new System.Drawing.Point(3, 4);
             this.lblDestinationDir.Name = "lblDestinationDir";
-            this.lblDestinationDir.Size = new System.Drawing.Size(87, 13);
+            this.lblDestinationDir.Size = new System.Drawing.Size(58, 13);
             this.lblDestinationDir.TabIndex = 14;
-            this.lblDestinationDir.Text = "Output Directory:";
+            this.lblDestinationDir.Text = "Output Dir:";
             // 
             // lblOutputFormat
             // 
@@ -363,16 +363,16 @@ namespace ImageTypeConverter
             this.lblOutputFormat.AutoSize = true;
             this.lblOutputFormat.Location = new System.Drawing.Point(3, 28);
             this.lblOutputFormat.Name = "lblOutputFormat";
-            this.lblOutputFormat.Size = new System.Drawing.Size(99, 13);
+            this.lblOutputFormat.Size = new System.Drawing.Size(62, 13);
             this.lblOutputFormat.TabIndex = 8;
-            this.lblOutputFormat.Text = "New Image Format:";
+            this.lblOutputFormat.Text = "Img Format:";
             // 
             // comboBox1
             // 
             this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(109, 25);
+            this.comboBox1.Location = new System.Drawing.Point(72, 25);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 3, 3, 3);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(191, 21);
@@ -382,7 +382,7 @@ namespace ImageTypeConverter
             // 
             this.lnkOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lnkOutputDirectory.AutoSize = true;
-            this.lnkOutputDirectory.Location = new System.Drawing.Point(106, 4);
+            this.lnkOutputDirectory.Location = new System.Drawing.Point(69, 4);
             this.lnkOutputDirectory.Margin = new System.Windows.Forms.Padding(3, 6, 3, 5);
             this.lnkOutputDirectory.MaximumSize = new System.Drawing.Size(375, 30);
             this.lnkOutputDirectory.Name = "lnkOutputDirectory";

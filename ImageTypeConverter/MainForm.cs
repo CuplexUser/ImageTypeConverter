@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using Autofac;
 using ImageConverterLib.Services;
@@ -40,16 +42,14 @@ namespace ImageTypeConverter
             InitializeComponent();
         }
 
-        #region FormCallbackFunctions
-
-
-        /// <summary>
-        ///     Handles the Load event of the MainForm control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void MainForm_Load(object sender, EventArgs e)
+        private void UpdateControlStateFromUserConfig()
         {
+            if (lnkOutputDirectory.Text != _userConfigService.Config.OutputDirectory)
+            {
+                lnkOutputDirectory.Text = _userConfigService.Config.OutputDirectory;
+                lnkOutputDirectory.Links.Clear();
+                lnkOutputDirectory.Links.Add(0, lnkOutputDirectory.Text.Length, lnkOutputDirectory.Text);
+            }
         }
 
 
@@ -60,7 +60,42 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="LinkLabelLinkClickedEventArgs" /> instance containing the event data.</param>
         private void lnkOutputDirectory_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
+            if (e.Button == MouseButtons.Left)
+            {
+                string targetDir = e.Link.LinkData as string;
+
+                if (Directory.Exists(targetDir))
+                {
+                    Process.Start("explorer", targetDir);
+                }
+            }
         }
+
+        private void SelectOutputDir()
+        {
+            folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                _userConfigService.SetOutputFolder(folderBrowserDialog.SelectedPath);
+                UpdateControlStateFromUserConfig();
+            }
+        }
+
+
+        #region FormCallbackFunctions
+
+
+        /// <summary>
+        ///     Handles the Load event of the MainForm control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            UpdateControlStateFromUserConfig();
+        }
+
+
 
 
         /// <summary>
@@ -106,6 +141,8 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnBrowseFolder_Click(object sender, EventArgs e)
         {
+            SelectOutputDir();
+
         }
 
         #endregion
@@ -155,6 +192,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void setOutputFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SelectOutputDir();
         }
 
         /// <summary>
@@ -164,6 +202,10 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MessageBox.Show("Are you sure you want to close the application?", "Exit?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            {
+                Application.Exit();
+            }
         }
 
         /// <summary>
