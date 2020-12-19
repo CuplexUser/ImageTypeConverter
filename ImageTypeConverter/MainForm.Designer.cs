@@ -66,23 +66,25 @@ namespace ImageTypeConverter
             this.btnBrowseFolder = new System.Windows.Forms.Button();
             this.lblDestinationDir = new System.Windows.Forms.Label();
             this.lblOutputFormat = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.cboxImageFormat = new System.Windows.Forms.ComboBox();
+            this.imageFormatModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.lnkOutputDirectory = new System.Windows.Forms.LinkLabel();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
             this.lstImageConvertQueue = new System.Windows.Forms.ListBox();
-            this.imageDataModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBoxResult = new System.Windows.Forms.GroupBox();
             this.txtConversionResults = new System.Windows.Forms.RichTextBox();
+            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuMain.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.grpBoxImgInputSelect.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageDataModelBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).BeginInit();
             this.grpBoxResult.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -302,6 +304,8 @@ namespace ImageTypeConverter
             // 
             // openFileDialog
             // 
+            this.openFileDialog.Filter = "WEBP Images|*.webp|Tif images|*.tif";
+            this.openFileDialog.InitialDirectory = "D:\\Blandat";
             this.openFileDialog.Multiselect = true;
             this.openFileDialog.ShowReadOnly = true;
             // 
@@ -328,7 +332,7 @@ namespace ImageTypeConverter
             this.panel1.Controls.Add(this.btnBrowseFolder);
             this.panel1.Controls.Add(this.lblDestinationDir);
             this.panel1.Controls.Add(this.lblOutputFormat);
-            this.panel1.Controls.Add(this.comboBox1);
+            this.panel1.Controls.Add(this.cboxImageFormat);
             this.panel1.Controls.Add(this.lnkOutputDirectory);
             this.panel1.Location = new System.Drawing.Point(6, 275);
             this.panel1.Name = "panel1";
@@ -367,16 +371,23 @@ namespace ImageTypeConverter
             this.lblOutputFormat.TabIndex = 8;
             this.lblOutputFormat.Text = "Img Format:";
             // 
-            // comboBox1
+            // cboxImageFormat
             // 
-            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(72, 25);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(4, 3, 3, 3);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(191, 21);
-            this.comboBox1.TabIndex = 6;
+            this.cboxImageFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cboxImageFormat.DataSource = this.imageFormatModelBindingSource;
+            this.cboxImageFormat.DisplayMember = "Name";
+            this.cboxImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboxImageFormat.FormattingEnabled = true;
+            this.cboxImageFormat.Location = new System.Drawing.Point(72, 25);
+            this.cboxImageFormat.Margin = new System.Windows.Forms.Padding(4, 3, 3, 3);
+            this.cboxImageFormat.Name = "cboxImageFormat";
+            this.cboxImageFormat.Size = new System.Drawing.Size(160, 21);
+            this.cboxImageFormat.TabIndex = 6;
+            this.cboxImageFormat.ValueMember = "FileExtension";
+            // 
+            // imageFormatModelBindingSource
+            // 
+            this.imageFormatModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageFormatModel);
             // 
             // lnkOutputDirectory
             // 
@@ -437,18 +448,20 @@ namespace ImageTypeConverter
             this.lstImageConvertQueue.AllowDrop = true;
             this.lstImageConvertQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstImageConvertQueue.DataSource = this.imageDataModelBindingSource;
+            this.lstImageConvertQueue.DataSource = this.imageModelBindingSource;
             this.lstImageConvertQueue.DisplayMember = "DisplayName";
             this.lstImageConvertQueue.FormattingEnabled = true;
             this.lstImageConvertQueue.Location = new System.Drawing.Point(6, 19);
             this.lstImageConvertQueue.Name = "lstImageConvertQueue";
             this.lstImageConvertQueue.Size = new System.Drawing.Size(400, 251);
             this.lstImageConvertQueue.TabIndex = 0;
-            this.lstImageConvertQueue.ValueMember = "FullPath";
-            // 
-            // imageDataModelBindingSource
-            // 
-            this.imageDataModelBindingSource.DataSource = typeof(ImageConverterLib.DataModels.ImageDataModel);
+            this.lstImageConvertQueue.ValueMember = "UniqueId";
+            this.lstImageConvertQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragDrop);
+            this.lstImageConvertQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragEnter);
+            this.lstImageConvertQueue.DragOver += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragOver);
+            this.lstImageConvertQueue.DragLeave += new System.EventHandler(this.lstImageConvertQueue_DragLeave);
+            this.lstImageConvertQueue.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.lstImageConvertQueue_GiveFeedback);
+            this.lstImageConvertQueue.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.lstImageConvertQueue_QueryContinueDrag);
             // 
             // folderBrowserDialog
             // 
@@ -479,6 +492,10 @@ namespace ImageTypeConverter
             this.txtConversionResults.TabIndex = 0;
             this.txtConversionResults.Text = "";
             // 
+            // imageModelBindingSource
+            // 
+            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -503,8 +520,9 @@ namespace ImageTypeConverter
             this.grpBoxImgInputSelect.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageDataModelBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).EndInit();
             this.grpBoxResult.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -533,7 +551,7 @@ namespace ImageTypeConverter
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.GroupBox grpBoxImgInputSelect;
         private System.Windows.Forms.Button btnBrowseFolder;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox cboxImageFormat;
         private System.Windows.Forms.ListBox lstImageConvertQueue;
         private System.Windows.Forms.Label lblOutputFormat;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
@@ -546,7 +564,6 @@ namespace ImageTypeConverter
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem5;
         private System.Windows.Forms.Button btnDown;
         private System.Windows.Forms.Button btnUp;
-        private System.Windows.Forms.BindingSource imageDataModelBindingSource;
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Label lblDestinationDir;
@@ -558,6 +575,8 @@ namespace ImageTypeConverter
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox grpBoxResult;
         private System.Windows.Forms.RichTextBox txtConversionResults;
+        private System.Windows.Forms.BindingSource imageFormatModelBindingSource;
+        private System.Windows.Forms.BindingSource imageModelBindingSource;
     }
 }
 

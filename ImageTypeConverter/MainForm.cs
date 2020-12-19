@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Autofac;
+using ImageConverterLib.Configuration;
+using ImageConverterLib.Library.DataFlow;
+using ImageConverterLib.Models;
 using ImageConverterLib.Services;
 
 namespace ImageTypeConverter
@@ -28,6 +32,8 @@ namespace ImageTypeConverter
         /// </summary>
         private readonly UserConfigService _userConfigService;
 
+        private bool _ListDropActive = false;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
         /// </summary>
@@ -40,6 +46,18 @@ namespace ImageTypeConverter
             _scope = scope;
             _userConfigService = userConfigService;
             InitializeComponent();
+        }
+
+        private void InitializeForm()
+        {
+            var imageTypeCollection = ImageFormatCollection.Create();
+
+            imageFormatModelBindingSource.DataSource = imageTypeCollection.ImageTypes;
+
+            if (cboxImageFormat.Items.Count > 0)
+            {
+                cboxImageFormat.SelectedIndex = 0;
+            }
         }
 
         private void UpdateControlStateFromUserConfig()
@@ -81,22 +99,40 @@ namespace ImageTypeConverter
             }
         }
 
-
-        #region FormCallbackFunctions
-
-
-        /// <summary>
-        ///     Handles the Load event of the MainForm control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void MainForm_Load(object sender, EventArgs e)
         {
+            InitializeForm();
             UpdateControlStateFromUserConfig();
         }
 
+        private void AddImagesUsingFileOpenDialog()
+        {
+            if (openFileDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                var selectedFiles = openFileDialog.FileNames.ToList();
+                var messageQueue = EventMessageQueue.CreateEventMessageQueue();
+                
+                foreach (string filePath in selectedFiles)
+                {
+                    // validation for filepath being unique.
+                    bool isValid=_userConfigService.AddImageToProcessQueue(filePath, ref messageQueue);
+
+                    if (!isValid)
+                    {
+                        foreach (string message in messageQueue.GetMessageEnumerable())
+                        {
+                            MessageBox.Show(message, "Failed to add image", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                    }
+                }
+
+                imageModelBindingSource.DataSource = _userConfigService.Config;
+                imageFormatModelBindingSource.ResetBindings(false);
+            }
+        }
 
 
+        #region FormCallbackFunctions
 
         /// <summary>
         ///     Handles the Click event of the btnUp control.
@@ -105,6 +141,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnUp_Click(object sender, EventArgs e)
         {
+
         }
 
         /// <summary>
@@ -114,6 +151,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnDown_Click(object sender, EventArgs e)
         {
+
         }
 
         /// <summary>
@@ -123,6 +161,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnAdd_Click(object sender, EventArgs e)
         {
+            AddImagesUsingFileOpenDialog();
         }
 
         /// <summary>
@@ -183,6 +222,8 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            AddImagesUsingFileOpenDialog();
+
         }
 
         /// <summary>
@@ -251,6 +292,59 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+        }
+
+        #endregion
+
+        #region Drag & Drop Event Handlers
+
+
+
+        private void lstImageConvertQueue_DragDrop(object sender, DragEventArgs e)
+        {
+
+        }
+
+        private void lstImageConvertQueue_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                _ListDropActive = true;
+            }
+            else
+            {
+                _ListDropActive = false;
+            }
+
+
+        }
+
+        private void lstImageConvertQueue_DragLeave(object sender, EventArgs e)
+        {
+            _ListDropActive = false;
+        }
+
+        private void lstImageConvertQueue_DragOver(object sender, DragEventArgs e)
+        {
+            if (_ListDropActive)
+            {
+                if ((e.AllowedEffect & DragDropEffects.Link) > 0)
+                {
+                    e.Effect = DragDropEffects.Link;
+                }
+
+
+            }
+        }
+
+        private void lstImageConvertQueue_GiveFeedback(object sender, GiveFeedbackEventArgs e)
+        {
+
+        }
+
+        private void lstImageConvertQueue_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
+        {
+
         }
 
         #endregion

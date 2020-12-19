@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ImageConverterLib.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="SupportedInputFileTypes" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">.jpg;.jpeg;.webp;.tif;.png</Value>
+    </Setting>
+    <Setting Name="SupportedOutputFormats" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">.jpg;.png</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>
