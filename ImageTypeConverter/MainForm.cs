@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -8,6 +11,7 @@ using ImageConverterLib.Configuration;
 using ImageConverterLib.Library.DataFlow;
 using ImageConverterLib.Models;
 using ImageConverterLib.Services;
+using Serilog;
 
 namespace ImageTypeConverter
 {
@@ -105,17 +109,20 @@ namespace ImageTypeConverter
             UpdateControlStateFromUserConfig();
         }
 
+        /// <summary>
+        /// Adds the images using file open dialog.
+        /// </summary>
         private void AddImagesUsingFileOpenDialog()
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 var selectedFiles = openFileDialog.FileNames.ToList();
                 var messageQueue = EventMessageQueue.CreateEventMessageQueue();
-                
+
                 foreach (string filePath in selectedFiles)
                 {
                     // validation for filepath being unique.
-                    bool isValid=_userConfigService.AddImageToProcessQueue(filePath, ref messageQueue);
+                    bool isValid = _userConfigService.AddImageToProcessQueue(filePath, ref messageQueue);
 
                     if (!isValid)
                     {
@@ -126,8 +133,94 @@ namespace ImageTypeConverter
                     }
                 }
 
-                imageModelBindingSource.DataSource = _userConfigService.Config;
-                imageFormatModelBindingSource.ResetBindings(false);
+
+                imageModelBindingSource.SuspendBinding();
+                imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
+                imageModelBindingSource.Sort = "SortOrder";
+                imageModelBindingSource.ResumeBinding();
+                imageModelBindingSource.ResetBindings(true);
+            }
+        }
+
+        /// <summary>
+        /// Removes the selected image from queue.
+        /// </summary>
+        private void RemoveSelectedImageFromQueue()
+        {
+            if (DataGridImgConvertQueue.SelectedRows.Count == 0)
+            {
+                Log.Debug("Remove input queue item failed because no grid view items where selected.");
+                return;
+            }
+
+
+            var messageQueue = EventMessageQueue.CreateEventMessageQueue();
+            var selectedRows = DataGridImgConvertQueue.SelectedRows;
+
+            imageModelBindingSource.SuspendBinding();
+            foreach (DataGridViewRow row in selectedRows)
+            {
+                if (row.DataBoundItem is ImageModel model)
+                {
+                    if (!_userConfigService.RemoveImageFromProcessQueue(model, ref messageQueue))
+                    {
+                        foreach (string message in messageQueue.GetMessageEnumerable())
+                        {
+                            MessageBox.Show(message, "Failed to remove enqueued item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        }
+                    }
+
+
+                }
+            }
+
+            imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
+            imageModelBindingSource.ResumeBinding();
+            imageModelBindingSource.ResetBindings(true);
+        }
+
+        private void MoveSelectedRows(bool moveUp)
+        {
+            var selectedRows = DataGridImgConvertQueue.SelectedRows;
+
+            if (selectedRows.Count == 0 || selectedRows.Count == imageModelBindingSource.Count)
+            {
+                return;
+            }
+
+
+            List<Guid> rowSelection = new List<Guid>();
+            foreach (DataGridViewRow row in selectedRows)
+            {
+                if (row.DataBoundItem is ImageModel model)
+                {
+                    rowSelection.Add(model.UniqueId);
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (!_userConfigService.ChangeListPosition(rowSelection, moveUp))
+            {
+                return;
+            }
+
+            imageModelBindingSource.SuspendBinding();
+            imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
+            imageModelBindingSource.ResumeBinding();
+            imageModelBindingSource.ResetBindings(true);
+
+            // Reselect items
+            for (int i = 0; i < DataGridImgConvertQueue.Rows.Count; i++)
+            {
+                DataGridImgConvertQueue.Rows[i].Selected = false;
+            }
+
+            foreach (var model in rowSelection.Select(guid => _userConfigService.GetImageModelById(guid)))
+            {
+                DataGridImgConvertQueue.Rows[model.SortOrder].Selected = true;
             }
         }
 
@@ -141,7 +234,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnUp_Click(object sender, EventArgs e)
         {
-
+            MoveSelectedRows(true);
         }
 
         /// <summary>
@@ -151,7 +244,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnDown_Click(object sender, EventArgs e)
         {
-
+            MoveSelectedRows(false);
         }
 
         /// <summary>
@@ -171,6 +264,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void btnRemove_Click(object sender, EventArgs e)
         {
+            RemoveSelectedImageFromQueue();
         }
 
         /// <summary>

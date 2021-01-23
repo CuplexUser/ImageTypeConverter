@@ -62,6 +62,12 @@ namespace ImageTypeConverter
             this.toolStripConvertProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.grpBoxImgInputSelect = new System.Windows.Forms.GroupBox();
+            this.DataGridImgConvertQueue = new System.Windows.Forms.DataGridView();
+            this.fileNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Extension = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DirectoryPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnBrowseFolder = new System.Windows.Forms.Button();
             this.lblDestinationDir = new System.Windows.Forms.Label();
@@ -73,18 +79,17 @@ namespace ImageTypeConverter
             this.btnAdd = new System.Windows.Forms.Button();
             this.btnDown = new System.Windows.Forms.Button();
             this.btnUp = new System.Windows.Forms.Button();
-            this.lstImageConvertQueue = new System.Windows.Forms.ListBox();
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBoxResult = new System.Windows.Forms.GroupBox();
             this.txtConversionResults = new System.Windows.Forms.RichTextBox();
-            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuMain.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.grpBoxImgInputSelect.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).BeginInit();
             this.grpBoxResult.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -313,18 +318,90 @@ namespace ImageTypeConverter
             // 
             this.grpBoxImgInputSelect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.grpBoxImgInputSelect.Controls.Add(this.DataGridImgConvertQueue);
             this.grpBoxImgInputSelect.Controls.Add(this.panel1);
             this.grpBoxImgInputSelect.Controls.Add(this.btnRemove);
             this.grpBoxImgInputSelect.Controls.Add(this.btnAdd);
             this.grpBoxImgInputSelect.Controls.Add(this.btnDown);
             this.grpBoxImgInputSelect.Controls.Add(this.btnUp);
-            this.grpBoxImgInputSelect.Controls.Add(this.lstImageConvertQueue);
             this.grpBoxImgInputSelect.Location = new System.Drawing.Point(12, 27);
             this.grpBoxImgInputSelect.Name = "grpBoxImgInputSelect";
             this.grpBoxImgInputSelect.Size = new System.Drawing.Size(465, 339);
             this.grpBoxImgInputSelect.TabIndex = 2;
             this.grpBoxImgInputSelect.TabStop = false;
             this.grpBoxImgInputSelect.Text = "Images To Convert";
+            // 
+            // DataGridImgConvertQueue
+            // 
+            this.DataGridImgConvertQueue.AllowDrop = true;
+            this.DataGridImgConvertQueue.AllowUserToAddRows = false;
+            this.DataGridImgConvertQueue.AllowUserToDeleteRows = false;
+            this.DataGridImgConvertQueue.AllowUserToResizeRows = false;
+            this.DataGridImgConvertQueue.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DataGridImgConvertQueue.AutoGenerateColumns = false;
+            this.DataGridImgConvertQueue.BackgroundColor = System.Drawing.Color.Gainsboro;
+            this.DataGridImgConvertQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.DataGridImgConvertQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DataGridImgConvertQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.fileNameDataGridViewTextBoxColumn,
+            this.Extension,
+            this.Size,
+            this.DirectoryPath});
+            this.DataGridImgConvertQueue.DataSource = this.imageModelBindingSource;
+            this.DataGridImgConvertQueue.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.DataGridImgConvertQueue.Location = new System.Drawing.Point(9, 19);
+            this.DataGridImgConvertQueue.Name = "DataGridImgConvertQueue";
+            this.DataGridImgConvertQueue.ReadOnly = true;
+            this.DataGridImgConvertQueue.RowHeadersVisible = false;
+            this.DataGridImgConvertQueue.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.DataGridImgConvertQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.DataGridImgConvertQueue.Size = new System.Drawing.Size(397, 250);
+            this.DataGridImgConvertQueue.TabIndex = 16;
+            // 
+            // fileNameDataGridViewTextBoxColumn
+            // 
+            this.fileNameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.fileNameDataGridViewTextBoxColumn.DataPropertyName = "FileName";
+            this.fileNameDataGridViewTextBoxColumn.FillWeight = 130F;
+            this.fileNameDataGridViewTextBoxColumn.HeaderText = "File Name";
+            this.fileNameDataGridViewTextBoxColumn.MinimumWidth = 20;
+            this.fileNameDataGridViewTextBoxColumn.Name = "fileNameDataGridViewTextBoxColumn";
+            this.fileNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // Extension
+            // 
+            this.Extension.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Extension.DataPropertyName = "Extension";
+            this.Extension.FillWeight = 50F;
+            this.Extension.HeaderText = "Extension";
+            this.Extension.MinimumWidth = 15;
+            this.Extension.Name = "Extension";
+            this.Extension.ReadOnly = true;
+            // 
+            // Size
+            // 
+            this.Size.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.Size.DataPropertyName = "Size";
+            this.Size.FillWeight = 50F;
+            this.Size.HeaderText = "Size";
+            this.Size.MinimumWidth = 15;
+            this.Size.Name = "Size";
+            this.Size.ReadOnly = true;
+            // 
+            // DirectoryPath
+            // 
+            this.DirectoryPath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.DirectoryPath.DataPropertyName = "DirectoryPath";
+            this.DirectoryPath.HeaderText = "Directory";
+            this.DirectoryPath.MinimumWidth = 20;
+            this.DirectoryPath.Name = "DirectoryPath";
+            this.DirectoryPath.ReadOnly = true;
+            // 
+            // imageModelBindingSource
+            // 
+            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
             // 
             // panel1
             // 
@@ -405,6 +482,7 @@ namespace ImageTypeConverter
             // 
             // btnRemove
             // 
+            this.btnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemove.Location = new System.Drawing.Point(412, 112);
             this.btnRemove.Name = "btnRemove";
             this.btnRemove.Size = new System.Drawing.Size(45, 25);
@@ -415,6 +493,7 @@ namespace ImageTypeConverter
             // 
             // btnAdd
             // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAdd.Location = new System.Drawing.Point(412, 81);
             this.btnAdd.Name = "btnAdd";
             this.btnAdd.Size = new System.Drawing.Size(45, 25);
@@ -425,6 +504,7 @@ namespace ImageTypeConverter
             // 
             // btnDown
             // 
+            this.btnDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDown.Location = new System.Drawing.Point(412, 50);
             this.btnDown.Name = "btnDown";
             this.btnDown.Size = new System.Drawing.Size(45, 25);
@@ -435,6 +515,7 @@ namespace ImageTypeConverter
             // 
             // btnUp
             // 
+            this.btnUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnUp.Location = new System.Drawing.Point(412, 19);
             this.btnUp.Name = "btnUp";
             this.btnUp.Size = new System.Drawing.Size(45, 25);
@@ -442,26 +523,6 @@ namespace ImageTypeConverter
             this.btnUp.Text = "Up";
             this.btnUp.UseVisualStyleBackColor = true;
             this.btnUp.Click += new System.EventHandler(this.btnUp_Click);
-            // 
-            // lstImageConvertQueue
-            // 
-            this.lstImageConvertQueue.AllowDrop = true;
-            this.lstImageConvertQueue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.lstImageConvertQueue.DataSource = this.imageModelBindingSource;
-            this.lstImageConvertQueue.DisplayMember = "DisplayName";
-            this.lstImageConvertQueue.FormattingEnabled = true;
-            this.lstImageConvertQueue.Location = new System.Drawing.Point(6, 19);
-            this.lstImageConvertQueue.Name = "lstImageConvertQueue";
-            this.lstImageConvertQueue.Size = new System.Drawing.Size(400, 251);
-            this.lstImageConvertQueue.TabIndex = 0;
-            this.lstImageConvertQueue.ValueMember = "UniqueId";
-            this.lstImageConvertQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragDrop);
-            this.lstImageConvertQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragEnter);
-            this.lstImageConvertQueue.DragOver += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragOver);
-            this.lstImageConvertQueue.DragLeave += new System.EventHandler(this.lstImageConvertQueue_DragLeave);
-            this.lstImageConvertQueue.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.lstImageConvertQueue_GiveFeedback);
-            this.lstImageConvertQueue.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.lstImageConvertQueue_QueryContinueDrag);
             // 
             // folderBrowserDialog
             // 
@@ -492,10 +553,6 @@ namespace ImageTypeConverter
             this.txtConversionResults.TabIndex = 0;
             this.txtConversionResults.Text = "";
             // 
-            // imageModelBindingSource
-            // 
-            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -518,11 +575,12 @@ namespace ImageTypeConverter
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.grpBoxImgInputSelect.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).EndInit();
             this.grpBoxResult.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -552,7 +610,6 @@ namespace ImageTypeConverter
         private System.Windows.Forms.GroupBox grpBoxImgInputSelect;
         private System.Windows.Forms.Button btnBrowseFolder;
         private System.Windows.Forms.ComboBox cboxImageFormat;
-        private System.Windows.Forms.ListBox lstImageConvertQueue;
         private System.Windows.Forms.Label lblOutputFormat;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
@@ -576,7 +633,12 @@ namespace ImageTypeConverter
         private System.Windows.Forms.GroupBox grpBoxResult;
         private System.Windows.Forms.RichTextBox txtConversionResults;
         private System.Windows.Forms.BindingSource imageFormatModelBindingSource;
+        private System.Windows.Forms.DataGridView DataGridImgConvertQueue;
         private System.Windows.Forms.BindingSource imageModelBindingSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn fileNameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Extension;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Size;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DirectoryPath;
     }
 }
 

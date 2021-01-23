@@ -22,6 +22,10 @@ namespace ImageConverterLib.Services
             get { return _userConfig; }
         }
 
+        public int MaxSortOrder => _userConfig.ImageModels?.Max(x => x.SortOrder) ?? 0;
+
+        public int MinSortOrder => _userConfig.ImageModels?.Min(x => x.SortOrder) ?? 0;
+
         public UserConfigService(IMapper mapper, UserConfigRepository userConfigRepository)
         {
             _mapper = mapper;
@@ -56,7 +60,7 @@ namespace ImageConverterLib.Services
 
         private UserConfigModel CreateDefaultConfig()
         {
-            return new UserConfigModel { ImageModels = new List<ImageModel>(), OutputDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ConvertedImages") };
+            return new UserConfigModel(new List<ImageModel>(), Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "ConvertedImages"));
         }
 
         public bool AddImageToProcessQueue(string filePath, ref EventMessageQueue eventMessageQueue)
@@ -66,14 +70,14 @@ namespace ImageConverterLib.Services
                 // Validate access and existence
                 if (!File.Exists(filePath))
                 {
-                    eventMessageQueue.AddMessage("A file with specified path does not exist");
+                    eventMessageQueue.AddMessage($"{filePath} - A file with specified path does not exist");
                     return false;
                 }
 
                 // Validate uniqueness
                 if (_userConfig.ImageModels.Any(x => x.FilePath.Equals(filePath, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    eventMessageQueue.AddMessage("Tried to add a filePath which is already in the process queue.");
+                    eventMessageQueue.AddMessage($"{filePath} - Is already added to the process queue.");
                     return false;
                 }
 
@@ -85,25 +89,45 @@ namespace ImageConverterLib.Services
                 model.FileName = fi.Name;
                 model.CreationTime = fi.CreationTime;
                 model.Extension = fi.Extension;
-                model.DirectoryName = fi.DirectoryName;
+                model.DirectoryPath = fi.DirectoryName;
                 model.FileSize = fi.Length;
+                model.Size = FileNameParser.GetFileSizeWithPrefix(model.FileSize);
 
-                model.DisplayName = $"{model.FileName} - Size: {FileNameParser.GetFileSizeWithPrefix(model.FileSize)}";
-
+                model.DisplayName = $"FileName: {model.FileName}, Size{model.Size}";
+                _userConfig.ImageModels.Add(model);
 
                 return true;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "AddImageToProcessQueue threw an exception", nameof(filePath));
-                eventMessageQueue.AddMessage("Argument exception was thrown because the file dows not exist");
+                eventMessageQueue.AddMessage(ex.Message);
             }
 
             return false;
         }
 
+        public bool RemoveImageFromProcessQueue(ImageModel imageModel, ref EventMessageQueue messageQueue)
+        {
+            if (_userConfig.ImageModels.All(x => x.UniqueId != imageModel.UniqueId))
+            {
+                messageQueue.AddMessage($"Could not remove ({imageModel.DisplayName}). Item does nor exist");
+                return false;
+            }
+
+            ImageModel imageModelToRemove = _userConfig.ImageModels.Single(x => x.UniqueId == imageModel.UniqueId);
+            bool result = _userConfig.ImageModels.Remove(imageModelToRemove);
+
+            return result;
+        }
+
         private int GetNextSortOrder()
         {
+            if (_userConfig.ImageModels.Count == 0)
+            {
+                return 0;
+            }
+
             int maxSortOrder = _userConfig.ImageModels.Max(x => x.SortOrder);
 
             if (maxSortOrder != _userConfig.ImageModels.Count)
@@ -114,7 +138,7 @@ namespace ImageConverterLib.Services
             {
                 maxSortOrder++;
             }
-            
+
             return maxSortOrder;
         }
 
@@ -124,7 +148,7 @@ namespace ImageConverterLib.Services
             {
                 return 0;
             }
-            
+
             var sortedList = _userConfig.ImageModels.OrderBy(x => x.SortOrder).ToList();
             for (int i = 0; i < sortedList.Count; i++)
             {
@@ -132,8 +156,100 @@ namespace ImageConverterLib.Services
             }
 
             return _userConfig.ImageModels.Last().SortOrder;
+        }
+
+        private void SortImageModels()
+        {
+            _userConfig.ImageModels.Sort(SortOrderComparison);
+        }
+
+        private int SortOrderComparison(ImageModel x, ImageModel y)
+        {
+            if (x.SortOrder > y.SortOrder)
+                return 1;
+            if (x.SortOrder < y.SortOrder)
+                return -1;
+
+            return 0;
+        }
+
+        public bool ChangeListPosition(IEnumerable<Guid> imageGuilds, bool decrementSortIndex)
+        {
+            var models = _userConfig.ImageModels.Where(m => imageGuilds.Contains(m.UniqueId)).OrderBy(m=>m.SortOrder).ToList();
+            var allModels = _userConfig.ImageModels.OrderBy(m=>m.SortOrder).ToList();
+
+            //TODO Fix shift position algorithm
+
+            //Move Up
+            if (decrementSortIndex)
+            {
+                int min = models.Min(x => x.SortOrder);
+                if (min > 0)
+                {
+                    int index = 1;
+                    foreach (var model in models)
+                    {
+                        model.SortOrder -= index;
+                        index++;
+                    }
+
+                    foreach (var model in allModels)
+                    {
+                        if (imageGuilds.All(m => m != model.UniqueId))
+                        {
+                            model.SortOrder++;
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            else
+            {
+                int max = models.Max(x => x.SortOrder);
+                if (max < _userConfig.ImageModels.Count)
+                {
+                    int index = 1;
+                    foreach (var model in models)
+                    {
+                        model.SortOrder = model.SortOrder + index;
+                        //index++;
+                    }
+
+                    foreach (var model in allModels)
+                    {
+                        if (imageGuilds.All(m => m != model.UniqueId))
+                        {
+                            model.SortOrder--;
+                        }
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            SortImageModels();
+            RebuildSortIndex();
+            return true;
+        }
 
 
+        private void RebuildSortIndex()
+        {
+            for (int i = 0; i < _userConfig.ImageModels.Count; i++)
+            {
+                _userConfig.ImageModels[i].SortOrder = i;
+            }
+        }
+
+        public ImageModel GetImageModelById(Guid guid)
+        {
+            return _userConfig.ImageModels.SingleOrDefault(x => x.UniqueId == guid);
         }
     }
 }

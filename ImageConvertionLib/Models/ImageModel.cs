@@ -27,13 +27,19 @@ namespace ImageConverterLib.Models
             return imageModel;
         }
 
+        public ImageModel(string filePath, Guid uniqueId)
+        {
+            FilePath = filePath;
+            UniqueId = uniqueId;
+        }
+
         /// <summary>
         /// Gets the unique identifier.
         /// </summary>
         /// <value>
         /// The unique identifier.
         /// </value>
-        public Guid UniqueId { get; }
+        public Guid UniqueId { get; private set; }
 
         /// <summary>
         ///     returns the complete path to the image.
@@ -41,7 +47,7 @@ namespace ImageConverterLib.Models
         /// <value>
         ///     The full path.
         /// </value>
-        public string FilePath { get; }
+        public string FilePath { get; private set; }
 
         /// <summary>
         /// Gets or sets the name of the file.
@@ -65,7 +71,7 @@ namespace ImageConverterLib.Models
         /// <value>
         ///     The directory path.
         /// </value>
-        public string DirectoryName { get; set; }
+        public string DirectoryPath { get; set; }
 
         /// <summary>
         ///     Gets or sets the display name.
@@ -92,6 +98,14 @@ namespace ImageConverterLib.Models
         public long FileSize { get; set; }
 
         /// <summary>
+        /// Gets or sets the size.
+        /// </summary>
+        /// <value>
+        /// The size.
+        /// </value>
+        public string Size { get; set; }
+
+        /// <summary>
         ///     Gets or sets the created date.
         /// </summary>
         /// <value>
@@ -104,6 +118,12 @@ namespace ImageConverterLib.Models
         {
             expression.CreateMap<ImageModel, ImageDataModel>()
                       .ForMember(s => s.FullPath, o => o.MapFrom(d => d.FilePath))
+                      .ForMember(s => s.CreatedDate, o => o.MapFrom(d => d.CreationTime))
+                      .ForMember(s => s.DirectoryPath, o => o.MapFrom(d => d.DirectoryPath))
+                      .ForMember(s => s.DisplayName, o => o.MapFrom(d => d.DisplayName))
+                      .ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
+                      .ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
+                      .ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
                       .ReverseMap();
         }
     }
