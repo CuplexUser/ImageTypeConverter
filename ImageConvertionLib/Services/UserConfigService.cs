@@ -175,62 +175,66 @@ namespace ImageConverterLib.Services
 
         public bool ChangeListPosition(IEnumerable<Guid> imageGuilds, bool decrementSortIndex)
         {
-            var models = _userConfig.ImageModels.Where(m => imageGuilds.Contains(m.UniqueId)).OrderBy(m=>m.SortOrder).ToList();
-            var allModels = _userConfig.ImageModels.OrderBy(m=>m.SortOrder).ToList();
+            var models = _userConfig.ImageModels.Where(m => imageGuilds.Contains(m.UniqueId)).OrderBy(m => m.SortOrder).ToList();
+            var nonSelectedModels = _userConfig.ImageModels.Where(m => !imageGuilds.Contains(m.UniqueId)).OrderBy(m => m.SortOrder).ToList();
 
-            //TODO Fix shift position algorithm
+            /*
+             * List Shift algorithm
+             *
+             */
 
             //Move Up
             if (decrementSortIndex)
             {
                 int min = models.Min(x => x.SortOrder);
+                int max = models.Max(x => x.SortOrder);
+
                 if (min > 0)
                 {
-                    int index = 1;
+                  
                     foreach (var model in models)
                     {
-                        model.SortOrder -= index;
-                        index++;
+                        model.SortOrder--;
                     }
 
-                    foreach (var model in allModels)
+                    nonSelectedModels = nonSelectedModels.Where(m => models.Any(x => x.SortOrder == m.SortOrder)).ToList();
+
+                    int index = models.Max(m => m.SortOrder) + 1;
+                    for (int i = 0; i < nonSelectedModels.Count; i++)
                     {
-                        if (imageGuilds.All(m => m != model.UniqueId))
-                        {
-                            model.SortOrder++;
-                        }
+                        nonSelectedModels[i].SortOrder = index + i;
                     }
                 }
                 else
                 {
                     return false;
                 }
-
             }
             else
             {
                 int max = models.Max(x => x.SortOrder);
+
                 if (max < _userConfig.ImageModels.Count)
                 {
-                    int index = 1;
                     foreach (var model in models)
                     {
-                        model.SortOrder = model.SortOrder + index;
-                        //index++;
+                        model.SortOrder++;
                     }
 
-                    foreach (var model in allModels)
+                    nonSelectedModels = nonSelectedModels.Where(m => models.Any(x => x.SortOrder == m.SortOrder)).ToList();
+
+                    int index = models.Min(m => m.SortOrder) - 1;
+                    for (int i = 0; i < nonSelectedModels.Count; i++)
                     {
-                        if (imageGuilds.All(m => m != model.UniqueId))
-                        {
-                            model.SortOrder--;
-                        }
+                        nonSelectedModels[i].SortOrder = index - i;
                     }
+
                 }
                 else
                 {
                     return false;
                 }
+
             }
 
             SortImageModels();
