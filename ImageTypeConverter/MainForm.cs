@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using ImageConverterLib.Configuration;
+using ImageConverterLib.ImageProcessing.Models;
+using ImageConverterLib.Library;
 using ImageConverterLib.Library.DataFlow;
 using ImageConverterLib.Models;
 using ImageConverterLib.Services;
@@ -27,6 +27,11 @@ namespace ImageTypeConverter
         private readonly ApplicationSettingsService _applicationSettingsService;
 
         /// <summary>
+        ///     The Image converter service
+        /// </summary>
+        private readonly ImageConverterService _converterService;
+
+        /// <summary>
         ///     The scope
         /// </summary>
         private readonly ILifetimeScope _scope;
@@ -36,7 +41,7 @@ namespace ImageTypeConverter
         /// </summary>
         private readonly UserConfigService _userConfigService;
 
-        private bool _ListDropActive = false;
+        private bool _ListDropActive;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
@@ -44,11 +49,13 @@ namespace ImageTypeConverter
         /// <param name="applicationSettingsService">The application settings service.</param>
         /// <param name="scope">The scope.</param>
         /// <param name="userConfigService">The user configuration service.</param>
-        public MainForm(ApplicationSettingsService applicationSettingsService, ILifetimeScope scope, UserConfigService userConfigService)
+        /// <param name="converterService"></param>
+        public MainForm(ApplicationSettingsService applicationSettingsService, ILifetimeScope scope, UserConfigService userConfigService, ImageConverterService converterService)
         {
             _applicationSettingsService = applicationSettingsService;
             _scope = scope;
             _userConfigService = userConfigService;
+            _converterService = converterService;
             InitializeComponent();
         }
 
@@ -56,12 +63,15 @@ namespace ImageTypeConverter
         {
             var imageTypeCollection = ImageFormatCollection.Create();
 
-            imageFormatModelBindingSource.DataSource = imageTypeCollection.ImageTypes;
+            imageFormatModelBindingSource.SuspendBinding();
+            imageFormatModelBindingSource.DataSource = imageTypeCollection.GetImageTypes();
+            cboxImageFormat.DataSource = imageFormatModelBindingSource;
+            cboxImageFormat.DisplayMember = imageTypeCollection.DisplayMember;
+            cboxImageFormat.ValueMember = imageTypeCollection.ValueMember;
+            imageFormatModelBindingSource.ResetBindings(true);
+            imageFormatModelBindingSource.ResumeBinding();
 
-            if (cboxImageFormat.Items.Count > 0)
-            {
-                cboxImageFormat.SelectedIndex = 0;
-            }
+            if (cboxImageFormat.Items.Count > 0) cboxImageFormat.SelectedIndex = 0;
         }
 
         private void UpdateControlStateFromUserConfig()
@@ -72,6 +82,11 @@ namespace ImageTypeConverter
                 lnkOutputDirectory.Links.Clear();
                 lnkOutputDirectory.Links.Add(0, lnkOutputDirectory.Text.Length, lnkOutputDirectory.Text);
             }
+        }
+
+        private void UpdateMenuState()
+        {
+            startBatchConvertionToolStripMenuItem.Enabled = !_converterService.IsRunning;
         }
 
 
@@ -86,10 +101,7 @@ namespace ImageTypeConverter
             {
                 string targetDir = e.Link.LinkData as string;
 
-                if (Directory.Exists(targetDir))
-                {
-                    Process.Start("explorer", targetDir);
-                }
+                if (Directory.Exists(targetDir)) Process.Start("explorer", targetDir);
             }
         }
 
@@ -106,11 +118,24 @@ namespace ImageTypeConverter
         private void MainForm_Load(object sender, EventArgs e)
         {
             InitializeForm();
+            _converterService.OnBatchCompleted += converterService_OnBatchCompleted;
             UpdateControlStateFromUserConfig();
         }
 
+
+        private void converterService_OnBatchCompleted(BatchEventArgs args)
+        {
+            Invoke(new BatchCompletedEventHandler(BatchComplete), this, new EventArgs());
+        }
+
+
+        private void BatchComplete(object sender, EventArgs e)
+        {
+            UpdateMenuState();
+        }
+
         /// <summary>
-        /// Adds the images using file open dialog.
+        ///     Adds the images using file open dialog.
         /// </summary>
         private void AddImagesUsingFileOpenDialog()
         {
@@ -125,12 +150,8 @@ namespace ImageTypeConverter
                     bool isValid = _userConfigService.AddImageToProcessQueue(filePath, ref messageQueue);
 
                     if (!isValid)
-                    {
                         foreach (string message in messageQueue.GetMessageEnumerable())
-                        {
                             MessageBox.Show(message, "Failed to add image", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        }
-                    }
                 }
 
 
@@ -143,11 +164,11 @@ namespace ImageTypeConverter
         }
 
         /// <summary>
-        /// Removes the selected image from queue.
+        ///     Removes the selected image from queue.
         /// </summary>
         private void RemoveSelectedImageFromQueue()
         {
-            if (DataGridImgConvertQueue.SelectedRows.Count == 0)
+            if (DataGridImgConvertQueue?.SelectedRows.Count == 0)
             {
                 Log.Debug("Remove input queue item failed because no grid view items where selected.");
                 return;
@@ -157,55 +178,34 @@ namespace ImageTypeConverter
             var messageQueue = EventMessageQueue.CreateEventMessageQueue();
             var selectedRows = DataGridImgConvertQueue.SelectedRows;
 
-            imageModelBindingSource.SuspendBinding();
             foreach (DataGridViewRow row in selectedRows)
-            {
                 if (row.DataBoundItem is ImageModel model)
-                {
-                    if (!_userConfigService.RemoveImageFromProcessQueue(model, ref messageQueue))
-                    {
+                    if (!_userConfigService.RemoveImageFromProcessQueue(model.UniqueId, ref messageQueue))
                         foreach (string message in messageQueue.GetMessageEnumerable())
-                        {
                             MessageBox.Show(message, "Failed to remove enqueued item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        }
-                    }
 
-
-                }
-            }
-
+            imageModelBindingSource.SuspendBinding();
             imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
-            imageModelBindingSource.ResumeBinding();
+            imageModelBindingSource.Sort = "SortOrder";
             imageModelBindingSource.ResetBindings(true);
+            imageModelBindingSource.ResumeBinding();
         }
 
         private void MoveSelectedRows(bool moveUp)
         {
             var selectedRows = DataGridImgConvertQueue.SelectedRows;
 
-            if (selectedRows.Count == 0 || selectedRows.Count == imageModelBindingSource.Count)
-            {
-                return;
-            }
+            if (selectedRows.Count == 0 || selectedRows.Count == imageModelBindingSource.Count) return;
 
 
             List<Guid> rowSelection = new List<Guid>();
             foreach (DataGridViewRow row in selectedRows)
-            {
                 if (row.DataBoundItem is ImageModel model)
-                {
                     rowSelection.Add(model.UniqueId);
-                }
                 else
-                {
                     return;
-                }
-            }
 
-            if (!_userConfigService.ChangeListPosition(rowSelection, moveUp))
-            {
-                return;
-            }
+            if (!_userConfigService.ChangeListPosition(rowSelection, moveUp)) return;
 
             imageModelBindingSource.SuspendBinding();
             imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
@@ -213,16 +213,12 @@ namespace ImageTypeConverter
             imageModelBindingSource.ResetBindings(true);
 
             // Reselect items
-            for (int i = 0; i < DataGridImgConvertQueue.Rows.Count; i++)
-            {
-                DataGridImgConvertQueue.Rows[i].Selected = false;
-            }
+            for (int i = 0; i < DataGridImgConvertQueue.Rows.Count; i++) DataGridImgConvertQueue.Rows[i].Selected = false;
 
-            foreach (var model in rowSelection.Select(guid => _userConfigService.GetImageModelById(guid)))
-            {
-                DataGridImgConvertQueue.Rows[model.SortOrder].Selected = true;
-            }
+            foreach (var model in rowSelection.Select(guid => _userConfigService.GetImageModelById(guid))) DataGridImgConvertQueue.Rows[model.SortOrder].Selected = true;
         }
+
+        private delegate void BatchCompletedEventHandler(object sender, EventArgs eventArgs);
 
 
         #region FormCallbackFunctions
@@ -275,7 +271,6 @@ namespace ImageTypeConverter
         private void btnBrowseFolder_Click(object sender, EventArgs e)
         {
             SelectOutputDir();
-
         }
 
         #endregion
@@ -317,7 +312,6 @@ namespace ImageTypeConverter
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             AddImagesUsingFileOpenDialog();
-
         }
 
         /// <summary>
@@ -337,10 +331,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to close the application?", "Exit?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                Application.Exit();
-            }
+            if (MessageBox.Show("Are you sure you want to close the application?", "Exit?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK) Application.Exit();
         }
 
         /// <summary>
@@ -350,6 +341,15 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void clearListToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (_userConfigService.Config.ImageModels.Count > 0)
+                if (MessageBox.Show($"Are you sure you want to clear the list with {_userConfigService.Config.ImageModels.Count} items", "Clear List?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    imageModelBindingSource.SuspendBinding();
+                    _userConfigService.ClearProcessQueue();
+                    imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
+                    imageModelBindingSource.ResumeBinding();
+                    imageModelBindingSource.ResetBindings(true);
+                }
         }
 
         /// <summary>
@@ -359,6 +359,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void clearResultOutputToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            txtConversionResults.Clear();
         }
 
         /// <summary>
@@ -368,6 +369,24 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void startBatchConversionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (_userConfigService.ProcessQueueLength == 0)
+            {
+                MessageBox.Show("Convert image list is empty!", "Nothing to do.", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            _userConfigService.Config.OutputFileExtension = ".jpeg";
+            _userConfigService.Config.OutputDirectory = lnkOutputDirectory.Text;
+            _converterService.InitBatch(_userConfigService.Config, _userConfigService.Config.OutputDirectory);
+            var progress = new BatchWorkflowProgress(new Progress<ImageEncodingProgress>(Handler));
+            //ProgressBar.
+            _converterService.ProcessBatch(null);
+            //UpdateMenuState();
+        }
+
+        private void Handler(ImageEncodingProgress obj)
+        {
+            
         }
 
         /// <summary>
@@ -377,6 +396,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            new AboutApplicationBox().ShowDialog(this);
         }
 
         /// <summary>
@@ -392,25 +412,16 @@ namespace ImageTypeConverter
 
         #region Drag & Drop Event Handlers
 
-
-
         private void lstImageConvertQueue_DragDrop(object sender, DragEventArgs e)
         {
-
         }
 
         private void lstImageConvertQueue_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
                 _ListDropActive = true;
-            }
             else
-            {
                 _ListDropActive = false;
-            }
-
-
         }
 
         private void lstImageConvertQueue_DragLeave(object sender, EventArgs e)
@@ -421,24 +432,16 @@ namespace ImageTypeConverter
         private void lstImageConvertQueue_DragOver(object sender, DragEventArgs e)
         {
             if (_ListDropActive)
-            {
                 if ((e.AllowedEffect & DragDropEffects.Link) > 0)
-                {
                     e.Effect = DragDropEffects.Link;
-                }
-
-
-            }
         }
 
         private void lstImageConvertQueue_GiveFeedback(object sender, GiveFeedbackEventArgs e)
         {
-
         }
 
         private void lstImageConvertQueue_QueryContinueDrag(object sender, QueryContinueDragEventArgs e)
         {
-
         }
 
         #endregion

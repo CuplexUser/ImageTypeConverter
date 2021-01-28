@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
-using ImageConverterLib.Models;
 
 namespace ImageConverterLib.Helpers
 {

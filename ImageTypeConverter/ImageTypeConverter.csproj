@@ -106,6 +106,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AboutApplicationBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AboutApplicationBox.Designer.cs">
+      <DependentUpon>AboutApplicationBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration\AutofacConfig.cs" />
     <Compile Include="Library\AutofacModules\ImageConverterGUIModule.cs" />
     <Compile Include="SettingsForm.cs">
@@ -122,6 +128,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="AboutApplicationBox.resx">
+      <DependentUpon>AboutApplicationBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -2,6 +2,7 @@
 using System.IO;
 using AutoMapper;
 using ImageConverterLib.DataModels;
+using ImageConverterLib.ImageProcessing.Models;
 
 namespace ImageConverterLib.Models
 {
@@ -124,6 +125,14 @@ namespace ImageConverterLib.Models
                       .ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
                       .ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
                       .ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
+                      .ReverseMap();
+
+            expression.CreateMap<ImageModel, ImageProcessModel>()
+                      .ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
+                      .ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
+                      .ForMember(s => s.FilePath, o => o.MapFrom(d => d.FilePath))
+                      .ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
+                      .ForMember(s => s.FileSize, o => o.MapFrom(d => d.FileSize))
                       .ReverseMap();
         }
     }

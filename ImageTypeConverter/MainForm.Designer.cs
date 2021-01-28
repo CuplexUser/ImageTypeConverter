@@ -53,27 +53,24 @@ namespace ImageTypeConverter
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startBatchConvertionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem6 = new System.Windows.Forms.ToolStripSeparator();
-            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuMain = new System.Windows.Forms.MenuStrip();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripConvertProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.ConvertProgress = new System.Windows.Forms.ToolStripProgressBar();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.grpBoxImgInputSelect = new System.Windows.Forms.GroupBox();
             this.DataGridImgConvertQueue = new System.Windows.Forms.DataGridView();
-            this.fileNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Extension = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Size = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DirectoryPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnBrowseFolder = new System.Windows.Forms.Button();
             this.lblDestinationDir = new System.Windows.Forms.Label();
             this.lblOutputFormat = new System.Windows.Forms.Label();
             this.cboxImageFormat = new System.Windows.Forms.ComboBox();
-            this.imageFormatModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.lnkOutputDirectory = new System.Windows.Forms.LinkLabel();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
@@ -82,14 +79,17 @@ namespace ImageTypeConverter
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBoxResult = new System.Windows.Forms.GroupBox();
             this.txtConversionResults = new System.Windows.Forms.RichTextBox();
+            this.fileNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.imageFormatModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuMain.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.grpBoxImgInputSelect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).BeginInit();
             this.grpBoxResult.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // fileToolStripMenuItem
@@ -111,57 +111,60 @@ namespace ImageTypeConverter
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.openToolStripMenuItem.Text = "&Open List";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.saveAsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.S)));
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.saveAsToolStripMenuItem.Text = "Save As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
             // 
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
-            this.toolStripMenuItem4.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem4.Size = new System.Drawing.Size(183, 6);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(167, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem1.Text = "&Add Source Files";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // toolStripMenuItem3
             // 
             this.toolStripMenuItem3.Name = "toolStripMenuItem3";
-            this.toolStripMenuItem3.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem3.Size = new System.Drawing.Size(183, 6);
             // 
             // setOutputFolderToolStripMenuItem
             // 
             this.setOutputFolderToolStripMenuItem.Name = "setOutputFolderToolStripMenuItem";
-            this.setOutputFolderToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.setOutputFolderToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.setOutputFolderToolStripMenuItem.Text = "Set Output Folder";
             this.setOutputFolderToolStripMenuItem.Click += new System.EventHandler(this.setOutputFolderToolStripMenuItem_Click);
             // 
             // toolStripMenuItem5
             // 
             this.toolStripMenuItem5.Name = "toolStripMenuItem5";
-            this.toolStripMenuItem5.Size = new System.Drawing.Size(164, 6);
+            this.toolStripMenuItem5.Size = new System.Drawing.Size(183, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.exitToolStripMenuItem.Text = "&Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -183,49 +186,56 @@ namespace ImageTypeConverter
             // cutToolStripMenuItem
             // 
             this.cutToolStripMenuItem.Name = "cutToolStripMenuItem";
-            this.cutToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.cutToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.cutToolStripMenuItem.Text = "Cut";
             // 
             // copyToolStripMenuItem
             // 
             this.copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            this.copyToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.copyToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.C)));
+            this.copyToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.copyToolStripMenuItem.Text = "Copy";
             // 
             // pasteToolStripMenuItem
             // 
             this.pasteToolStripMenuItem.Name = "pasteToolStripMenuItem";
-            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.pasteToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.V)));
+            this.pasteToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.pasteToolStripMenuItem.Text = "Paste";
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(174, 6);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(247, 6);
             // 
             // clearListToolStripMenuItem
             // 
             this.clearListToolStripMenuItem.Name = "clearListToolStripMenuItem";
-            this.clearListToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.clearListToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.C)));
+            this.clearListToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.clearListToolStripMenuItem.Text = "Clear Image Queue";
             this.clearListToolStripMenuItem.Click += new System.EventHandler(this.clearListToolStripMenuItem_Click);
             // 
             // clearResultOutputToolStripMenuItem
             // 
             this.clearResultOutputToolStripMenuItem.Name = "clearResultOutputToolStripMenuItem";
-            this.clearResultOutputToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.clearResultOutputToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.R)));
+            this.clearResultOutputToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.clearResultOutputToolStripMenuItem.Text = "Clear Result Output";
             this.clearResultOutputToolStripMenuItem.Click += new System.EventHandler(this.clearResultOutputToolStripMenuItem_Click);
             // 
             // toolStripMenuItem7
             // 
             this.toolStripMenuItem7.Name = "toolStripMenuItem7";
-            this.toolStripMenuItem7.Size = new System.Drawing.Size(174, 6);
+            this.toolStripMenuItem7.Size = new System.Drawing.Size(247, 6);
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.deleteToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Delete;
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(250, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // toolsToolStripMenuItem
@@ -233,7 +243,7 @@ namespace ImageTypeConverter
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startBatchConvertionToolStripMenuItem,
             this.toolStripMenuItem6,
-            this.settingsToolStripMenuItem});
+            this.optionsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -241,21 +251,23 @@ namespace ImageTypeConverter
             // startBatchConvertionToolStripMenuItem
             // 
             this.startBatchConvertionToolStripMenuItem.Name = "startBatchConvertionToolStripMenuItem";
-            this.startBatchConvertionToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+            this.startBatchConvertionToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
+            this.startBatchConvertionToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
             this.startBatchConvertionToolStripMenuItem.Text = "Start Batch Convertion";
             this.startBatchConvertionToolStripMenuItem.Click += new System.EventHandler(this.startBatchConversionToolStripMenuItem_Click);
             // 
             // toolStripMenuItem6
             // 
             this.toolStripMenuItem6.Name = "toolStripMenuItem6";
-            this.toolStripMenuItem6.Size = new System.Drawing.Size(190, 6);
+            this.toolStripMenuItem6.Size = new System.Drawing.Size(209, 6);
             // 
-            // settingsToolStripMenuItem
+            // optionsToolStripMenuItem
             // 
-            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-            this.settingsToolStripMenuItem.Text = "&Settings";
-            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
+            this.optionsToolStripMenuItem.Text = "&Options";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -268,7 +280,7 @@ namespace ImageTypeConverter
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -287,25 +299,36 @@ namespace ImageTypeConverter
             // 
             // statusStrip1
             // 
+            this.statusStrip1.GripMargin = new System.Windows.Forms.Padding(3);
+            this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripConvertProgress});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 369);
+            this.ConvertProgress});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 365);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(819, 22);
+            this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.statusStrip1.ShowItemToolTips = true;
+            this.statusStrip1.Size = new System.Drawing.Size(819, 26);
             this.statusStrip1.TabIndex = 1;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip1.Text = "Conversion Status";
             // 
             // toolStripStatusLabel1
             // 
+            this.toolStripStatusLabel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.toolStripStatusLabel1.BorderSides = ((System.Windows.Forms.ToolStripStatusLabelBorderSides)((((System.Windows.Forms.ToolStripStatusLabelBorderSides.Left | System.Windows.Forms.ToolStripStatusLabelBorderSides.Top) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Right) 
+            | System.Windows.Forms.ToolStripStatusLabelBorderSides.Bottom)));
+            this.toolStripStatusLabel1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(87, 17);
-            this.toolStripStatusLabel1.Text = "ToolStripLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(122, 21);
+            this.toolStripStatusLabel1.Text = "Conversion Progress:";
             // 
-            // toolStripConvertProgress
+            // ConvertProgress
             // 
-            this.toolStripConvertProgress.Name = "toolStripConvertProgress";
-            this.toolStripConvertProgress.Size = new System.Drawing.Size(100, 16);
+            this.ConvertProgress.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
+            this.ConvertProgress.Name = "ConvertProgress";
+            this.ConvertProgress.Size = new System.Drawing.Size(300, 20);
             // 
             // openFileDialog
             // 
@@ -360,16 +383,6 @@ namespace ImageTypeConverter
             this.DataGridImgConvertQueue.Size = new System.Drawing.Size(397, 250);
             this.DataGridImgConvertQueue.TabIndex = 16;
             // 
-            // fileNameDataGridViewTextBoxColumn
-            // 
-            this.fileNameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.fileNameDataGridViewTextBoxColumn.DataPropertyName = "FileName";
-            this.fileNameDataGridViewTextBoxColumn.FillWeight = 130F;
-            this.fileNameDataGridViewTextBoxColumn.HeaderText = "File Name";
-            this.fileNameDataGridViewTextBoxColumn.MinimumWidth = 20;
-            this.fileNameDataGridViewTextBoxColumn.Name = "fileNameDataGridViewTextBoxColumn";
-            this.fileNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
             // Extension
             // 
             this.Extension.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -399,10 +412,6 @@ namespace ImageTypeConverter
             this.DirectoryPath.Name = "DirectoryPath";
             this.DirectoryPath.ReadOnly = true;
             // 
-            // imageModelBindingSource
-            // 
-            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
-            // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -413,13 +422,13 @@ namespace ImageTypeConverter
             this.panel1.Controls.Add(this.lnkOutputDirectory);
             this.panel1.Location = new System.Drawing.Point(6, 275);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(459, 55);
+            this.panel1.Size = new System.Drawing.Size(411, 58);
             this.panel1.TabIndex = 15;
             // 
             // btnBrowseFolder
             // 
             this.btnBrowseFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBrowseFolder.Location = new System.Drawing.Point(322, 22);
+            this.btnBrowseFolder.Location = new System.Drawing.Point(274, 25);
             this.btnBrowseFolder.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this.btnBrowseFolder.Name = "btnBrowseFolder";
             this.btnBrowseFolder.Size = new System.Drawing.Size(126, 25);
@@ -432,7 +441,7 @@ namespace ImageTypeConverter
             // 
             this.lblDestinationDir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblDestinationDir.AutoSize = true;
-            this.lblDestinationDir.Location = new System.Drawing.Point(3, 4);
+            this.lblDestinationDir.Location = new System.Drawing.Point(3, 7);
             this.lblDestinationDir.Name = "lblDestinationDir";
             this.lblDestinationDir.Size = new System.Drawing.Size(58, 13);
             this.lblDestinationDir.TabIndex = 14;
@@ -442,7 +451,7 @@ namespace ImageTypeConverter
             // 
             this.lblOutputFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblOutputFormat.AutoSize = true;
-            this.lblOutputFormat.Location = new System.Drawing.Point(3, 28);
+            this.lblOutputFormat.Location = new System.Drawing.Point(3, 31);
             this.lblOutputFormat.Name = "lblOutputFormat";
             this.lblOutputFormat.Size = new System.Drawing.Size(62, 13);
             this.lblOutputFormat.TabIndex = 8;
@@ -451,26 +460,20 @@ namespace ImageTypeConverter
             // cboxImageFormat
             // 
             this.cboxImageFormat.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cboxImageFormat.DataSource = this.imageFormatModelBindingSource;
-            this.cboxImageFormat.DisplayMember = "Name";
+            this.cboxImageFormat.CausesValidation = false;
             this.cboxImageFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboxImageFormat.FormattingEnabled = true;
-            this.cboxImageFormat.Location = new System.Drawing.Point(72, 25);
+            this.cboxImageFormat.Location = new System.Drawing.Point(72, 28);
             this.cboxImageFormat.Margin = new System.Windows.Forms.Padding(4, 3, 3, 3);
             this.cboxImageFormat.Name = "cboxImageFormat";
             this.cboxImageFormat.Size = new System.Drawing.Size(160, 21);
             this.cboxImageFormat.TabIndex = 6;
-            this.cboxImageFormat.ValueMember = "FileExtension";
-            // 
-            // imageFormatModelBindingSource
-            // 
-            this.imageFormatModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageFormatModel);
             // 
             // lnkOutputDirectory
             // 
             this.lnkOutputDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lnkOutputDirectory.AutoSize = true;
-            this.lnkOutputDirectory.Location = new System.Drawing.Point(69, 4);
+            this.lnkOutputDirectory.Location = new System.Drawing.Point(69, 7);
             this.lnkOutputDirectory.Margin = new System.Windows.Forms.Padding(3, 6, 3, 5);
             this.lnkOutputDirectory.MaximumSize = new System.Drawing.Size(375, 30);
             this.lnkOutputDirectory.Name = "lnkOutputDirectory";
@@ -553,6 +556,24 @@ namespace ImageTypeConverter
             this.txtConversionResults.TabIndex = 0;
             this.txtConversionResults.Text = "";
             // 
+            // fileNameDataGridViewTextBoxColumn
+            // 
+            this.fileNameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.fileNameDataGridViewTextBoxColumn.DataPropertyName = "FileName";
+            this.fileNameDataGridViewTextBoxColumn.FillWeight = 130F;
+            this.fileNameDataGridViewTextBoxColumn.HeaderText = "File Name";
+            this.fileNameDataGridViewTextBoxColumn.MinimumWidth = 20;
+            this.fileNameDataGridViewTextBoxColumn.Name = "fileNameDataGridViewTextBoxColumn";
+            this.fileNameDataGridViewTextBoxColumn.ReadOnly = true;
+            // 
+            // imageModelBindingSource
+            // 
+            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
+            // 
+            // imageFormatModelBindingSource
+            // 
+            this.imageFormatModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageFormatModel);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -576,11 +597,11 @@ namespace ImageTypeConverter
             this.statusStrip1.PerformLayout();
             this.grpBoxImgInputSelect.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).EndInit();
             this.grpBoxResult.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -601,11 +622,11 @@ namespace ImageTypeConverter
         private System.Windows.Forms.ToolStripMenuItem pasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripProgressBar toolStripConvertProgress;
+        private System.Windows.Forms.ToolStripProgressBar ConvertProgress;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.GroupBox grpBoxImgInputSelect;
         private System.Windows.Forms.Button btnBrowseFolder;

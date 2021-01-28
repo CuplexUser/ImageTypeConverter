@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using ImageConverterLib.Models;
 
 namespace ImageConverterLib.Configuration
@@ -15,14 +14,33 @@ namespace ImageConverterLib.Configuration
         private readonly Dictionary<int, ImageFormatModel> _imageTypes;
 
         /// <summary>
+        /// Gets the display member.
+        /// </summary>
+        /// <value>
+        /// The display member.
+        /// </value>
+        public string DisplayMember => nameof(ImageFormatModel.Name);
+
+        /// <summary>
+        /// Gets the value member.
+        /// </summary>
+        /// <value>
+        /// The value member.
+        /// </value>
+        public string ValueMember =>  nameof(ImageFormatModel.Extension);
+
+        /// <summary>
         /// Gets the image types.
         /// </summary>
         /// <value>
         /// The image types.
         /// </value>
-        public ICollection<ImageFormatModel> ImageTypes
+        public IEnumerable<ImageFormatModel> GetImageTypes()
         {
-            get { return _imageTypes.Select(x => x.Value).ToList(); }
+            for (int i = 0; i < _imageTypes.Count; i++)
+            {
+                yield return _imageTypes[i];
+            }
         }
 
         /// <summary>
@@ -48,9 +66,9 @@ namespace ImageConverterLib.Configuration
         /// </summary>
         private void InitializeTypeList()
         {
-            _imageTypes.Add(1, new ImageFormatModel("*.jpg", "Jpeg Image (*.jpg)", 1));
-            _imageTypes.Add(2, new ImageFormatModel("*.png", "PNG image (*.png)", 2));
-            _imageTypes.Add(3, new ImageFormatModel("*.bmp", "Bitmap Image (*.bmp)", 1));
+            _imageTypes.Add(0, new ImageFormatModel("*.jpg", "Jpeg Image (*.jpg)", 0));
+            _imageTypes.Add(1, new ImageFormatModel("*.png", "PNG image (*.png)", 1));
+            _imageTypes.Add(2, new ImageFormatModel("*.bmp", "Bitmap Image (*.bmp)", 2));
         }
 
     }

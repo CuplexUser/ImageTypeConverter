@@ -20,5 +20,7 @@ namespace ImageConverterLib.Models
 
         public string OutputDirectory { get; set; }
 
+        public string OutputFileExtension { get; set; }
+
     }
 }
