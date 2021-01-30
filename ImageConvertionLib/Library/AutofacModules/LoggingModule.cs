@@ -19,7 +19,7 @@ namespace ImageConverterLib.Library.AutofacModules
 
             Log.Logger = new LoggerConfiguration()
                          .WriteTo.Console(LogEventLevel.Debug, standardErrorFromLevel: LogEventLevel.Error, formatProvider: CultureInfo.InvariantCulture)
-                         .WriteTo.File(ApplicationBuildConfig.ApplicationLogFilePath(true),
+                         .WriteTo.File(ApplicationBuildConfig.ApplicationLogFilePath(),
                              fileSizeLimitBytes: 1048576,
                              retainedFileCountLimit: 20,
                              restrictedToMinimumLevel: logLevel,

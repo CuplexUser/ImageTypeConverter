@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using AutoMapper;
-using ImageConverterLib.DataModels;
-using ImageConverterLib.ImageProcessing.Models;
 
 namespace ImageConverterLib.Models
 {
@@ -113,27 +110,5 @@ namespace ImageConverterLib.Models
         ///     The created date.
         /// </value>
         public DateTime CreationTime { get; set; }
-
-
-        public static void CreateMapping(IProfileExpression expression)
-        {
-            expression.CreateMap<ImageModel, ImageDataModel>()
-                      .ForMember(s => s.FullPath, o => o.MapFrom(d => d.FilePath))
-                      .ForMember(s => s.CreatedDate, o => o.MapFrom(d => d.CreationTime))
-                      .ForMember(s => s.DirectoryPath, o => o.MapFrom(d => d.DirectoryPath))
-                      .ForMember(s => s.DisplayName, o => o.MapFrom(d => d.DisplayName))
-                      .ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
-                      .ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
-                      .ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
-                      .ReverseMap();
-
-            expression.CreateMap<ImageModel, ImageProcessModel>()
-                      .ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
-                      .ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
-                      .ForMember(s => s.FilePath, o => o.MapFrom(d => d.FilePath))
-                      .ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
-                      .ForMember(s => s.FileSize, o => o.MapFrom(d => d.FileSize))
-                      .ReverseMap();
-        }
     }
 }

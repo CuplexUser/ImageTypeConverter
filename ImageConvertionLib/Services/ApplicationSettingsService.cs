@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Autofac;
 using ImageConverterLib.Models;
@@ -11,29 +12,25 @@ namespace ImageConverterLib.Services
     [UsedImplicitly]
     public sealed class ApplicationSettingsService : ServiceBase
     {
-        
-        private readonly AppConfigRepository _appConfigRepository;
+
+        private readonly AppSettingsRepository _appSettingsRepository;
 
         public string CompanyName { get; } = Application.CompanyName;
 
         public string ProductName { get; } = Application.ProductName;
         private ApplicationSettingsModel _applicationSettings;
-        
-        private readonly ILifetimeScope _scope;
 
-        public ApplicationSettingsService(AppConfigRepository appConfigRepository, ILifetimeScope scope)
+        public ApplicationSettingsService(AppSettingsRepository appSettingsRepository)
         {
-
-            _scope = scope;
-
-            _appConfigRepository = appConfigRepository;
+            _appSettingsRepository = appSettingsRepository;
 
             try
             {
-                bool result = _appConfigRepository.LoadSettings();
-                if (!result)
+                _applicationSettings = _appSettingsRepository.LoadSettings();
+                if (_applicationSettings == null)
                 {
-                    _appConfigRepository.SaveSettings();
+                    _applicationSettings = GetDefaultApplicationSettings();
+                    _appSettingsRepository.SaveSettings(_applicationSettings);
                 }
 
             }
@@ -41,29 +38,31 @@ namespace ImageConverterLib.Services
             {
 
                 Log.Error(ex, "Fatal error encountered when accessing the registry settings");
-             
-
+                throw new IOException("Application Settings could not be loaded and could not be set to default and saved");
             }
 
-            _appConfigRepository.LoadSettingsCompleted += _appSettingsFileRepository_LoadSettingsCompleted;
+            _appSettingsRepository.LoadSettingsCompleted += _appSettingsFileRepository_LoadSettingsCompleted;
         }
 
+        private ApplicationSettingsModel GetDefaultApplicationSettings()
+        {
+            var settings = new ApplicationSettingsModel {ImageFormatExtension = "", InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer), LastAppStartTime = DateTime.Now};
+
+            return settings;
+        }
 
 
         public void SetSettingsStateModified()
         {
-            _appConfigRepository.NotifySettingsChanged();
+            
         }
 
         public ApplicationSettingsModel Settings
         {
             get
             {
-                while (_applicationSettings == null)
+                if (_applicationSettings == null)
                 {
-                    if (!LoadLocalStorageSettings())
-                        throw new InvalidOperationException();
-
                     LoadLocalStorageSettings();
                 }
 
@@ -76,7 +75,7 @@ namespace ImageConverterLib.Services
 
         public event EventHandler OnSettingsLoaded;
         public event EventHandler OnSettingsSaved;
- 
+
 
 
         public bool LoadSettings()
@@ -86,7 +85,6 @@ namespace ImageConverterLib.Services
             try
             {
 
-                LoadLocalStorageSettings();
                 OnSettingsLoaded?.Invoke(this, EventArgs.Empty);
                 loadedSuccessively = true;
             }
@@ -100,12 +98,11 @@ namespace ImageConverterLib.Services
 
 
 
-        private bool LoadLocalStorageSettings()
+        private ApplicationSettingsModel LoadLocalStorageSettings()
         {
-            if (_applicationSettings != null && !_appConfigRepository.IsDirty)
-                return true;
+            _appSettingsRepository.LoadSettings();
 
-            return _appConfigRepository.LoadSettings();
+            return _applicationSettings;
         }
 
 
@@ -129,21 +126,14 @@ namespace ImageConverterLib.Services
 
             try
             {
-                result = _applicationSettings.SaveSettings(_applicationSettings);
-                if (!result)
-                {
-                    return false;
-                }
-                
-                
-
+                result = SaveSettings();
                 OnSettingsSaved?.Invoke(this, new EventArgs());
 
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "SaveSettings threw en exception on");
-                return false;
+                result = false;
             }
 
             return result;

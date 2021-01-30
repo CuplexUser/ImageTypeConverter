@@ -1,8 +1,6 @@
 ﻿using System.Reflection;
 using Autofac;
-using ImageConverterLib.Configuration;
-using ImageConverterLib.Library.AutofacModules;
-using ImageTypeConverter.Library.AutofacModules;
+using ImageConverterLib.ConfigHelper;
 
 
 namespace ImageTypeConverter.Configuration
@@ -16,34 +14,24 @@ namespace ImageTypeConverter.Configuration
         public static IContainer CreateContainer()
         {
             var builder = new ContainerBuilder();
-            var thisAssembly = GetMainAssembly();
+            var thisAssembly = Assembly.GetExecutingAssembly();
 
 
             Assembly[] coreAssemblies = new Assembly[2];
-            var ImageConverterLibAssembly = ImageConverterLib.Configuration.AssemblyHelper.GetAssembly();
+            var ImageConverterLibAssembly = AssemblyHelper.GetAssembly();
 
             coreAssemblies[0] = thisAssembly;
             coreAssemblies[1] = ImageConverterLibAssembly;
 
-            if (ImageConverterLibAssembly != null)
+            for (int i = 0; i < coreAssemblies.Length; i++)
             {
-                builder.RegisterAssemblyModules(ImageConverterLibAssembly);
+                builder.RegisterAssemblyModules(coreAssemblies[i]);
             }
 
-            builder.RegisterAssemblyModules(thisAssembly);
             var container = builder.Build();
 
 
             return container;
-        }
-
-        /// <summary>
-        /// Gets the main assembly.
-        /// </summary>
-        /// <returns></returns>
-        public static Assembly GetMainAssembly()
-        {
-            return typeof(ImageConverterGUIModule).Assembly;
         }
     }
 }

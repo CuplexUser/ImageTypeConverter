@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
 using AutoMapper;
+using AutoMapper.Contrib.Autofac.DependencyInjection;
 using ImageConverterLib.Providers;
 using ImageConverterLib.Repository;
 using ImageConverterLib.Services;
@@ -26,6 +26,7 @@ namespace ImageConverterLib.Library.AutofacModules
         /// </remarks>
         protected override void Load(ContainerBuilder builder)
         {
+            var assembly = Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(typeof(ServiceBase).Assembly)
                    .AssignableTo<ServiceBase>()
                    .AsSelf()
@@ -45,45 +46,45 @@ namespace ImageConverterLib.Library.AutofacModules
                    .SingleInstance();
 
 
+            // Register Automapper profiles for tImageConverterLib
+            builder.RegisterAutoMapper(assembly);
 
-            builder.Register(context => context.Resolve<MapperConfiguration>()
-                    .CreateMapper())
-                .As<IMapper>()
-                .AutoActivate()
-                .SingleInstance();
+            //builder.Register(context => context.Resolve<MapperConfiguration>()
+            //        .CreateMapper())
+            //    .As<IMapper>()
+            //    .AutoActivate()
+            //    .SingleInstance();
 
-            builder.Register(Configure)
-                            .AutoActivate()
-                            .AsSelf()
-                            .AsImplementedInterfaces()
-                            .SingleInstance();
 
-            var assembly = Assembly.GetExecutingAssembly();
-            builder.RegisterAssemblyTypes(assembly)
-                            .AssignableTo<Form>()
-                            .AsSelf()
-                            .InstancePerDependency();
+
+
+            //builder.RegisterAssemblyTypes(assembly)
+            //                .AssignableTo<Form>()
+            //                .AsSelf()
+            //                .InstancePerDependency();
         }
 
-        /// <summary>
-        /// Configures the specified context.
-        /// </summary>
-        /// <param name="context">The context.</param>
-        /// <returns></returns>
-        private static MapperConfiguration Configure(IComponentContext context)
-        {
-            var configuration = new MapperConfiguration(cfg =>
-            {
-                var innerContext = context.Resolve<IComponentContext>();
-                cfg.ConstructServicesUsing(innerContext.Resolve);
 
-                foreach (var profile in context.Resolve<IEnumerable<Profile>>())
-                {
-                    cfg.AddProfile(profile);
-                }
-            });
+        //builder.Register(Configure)
+        //                .AutoActivate()
+        //                .AsSelf()
+        //                .AsImplementedInterfaces()
+        //                .SingleInstance();
 
-            return configuration;
-        }
+        //private static MapperConfiguration Configure(IComponentContext context)
+        //{
+        //    var configuration = new MapperConfiguration(cfg =>
+        //    {
+        //        var innerContext = context.Resolve<IComponentContext>();
+        //        cfg.ConstructServicesUsing(innerContext.Resolve);
+
+        //        foreach (var profile in context.Resolve<IEnumerable<Profile>>())
+        //        {
+        //            cfg.AddProfile(profile);
+        //        }
+        //    });
+
+        //    return configuration;
+        //}
     }
 }

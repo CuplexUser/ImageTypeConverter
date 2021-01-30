@@ -658,7 +658,7 @@ namespace ImageTypeConverter
         private System.Windows.Forms.BindingSource imageModelBindingSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn fileNameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn Extension;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Size;
+        private new System.Windows.Forms.DataGridViewTextBoxColumn Size;
         private System.Windows.Forms.DataGridViewTextBoxColumn DirectoryPath;
     }
 }
