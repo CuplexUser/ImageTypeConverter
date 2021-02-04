@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ImageConverterLib.Models
 {
@@ -11,5 +12,7 @@ namespace ImageConverterLib.Models
         public string  ImageFormatExtension { get; set; }
 
         public DateTime LastAppStartTime{ get; set; }
+
+        public IDictionary<string, FormStateModel> FormStateModels { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using Autofac;
 using ImageConverterLib.Models;
 using ImageConverterLib.Repository;
 using JetBrains.Annotations;
@@ -70,12 +69,10 @@ namespace ImageConverterLib.Services
             }
             private set => _applicationSettings = value;
         }
-
-
+           
 
         public event EventHandler OnSettingsLoaded;
         public event EventHandler OnSettingsSaved;
-
 
 
         public bool LoadSettings()
@@ -85,6 +82,7 @@ namespace ImageConverterLib.Services
             try
             {
 
+                _applicationSettings = _appSettingsRepository.LoadSettings();
                 OnSettingsLoaded?.Invoke(this, EventArgs.Empty);
                 loadedSuccessively = true;
             }
@@ -126,8 +124,9 @@ namespace ImageConverterLib.Services
 
             try
             {
-                result = SaveSettings();
-                OnSettingsSaved?.Invoke(this, new EventArgs());
+                result = _appSettingsRepository.SaveSettings(_applicationSettings);
+                if (result)
+                    OnSettingsSaved?.Invoke(this, new EventArgs());
 
             }
             catch (Exception ex)

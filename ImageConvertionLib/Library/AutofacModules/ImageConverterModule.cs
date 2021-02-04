@@ -1,7 +1,5 @@
 ﻿using System.Reflection;
-using System.Windows.Forms;
 using Autofac;
-using AutoMapper;
 using AutoMapper.Contrib.Autofac.DependencyInjection;
 using ImageConverterLib.Providers;
 using ImageConverterLib.Repository;

@@ -1,19 +1,27 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using ImageConverterLib.DataModels;
 using ProtoBuf;
 using Serilog;
+using SevenZip.Storage;
+using SevenZip.Storage.Models;
 
 namespace ImageConverterLib.Providers
 {
     public class FileSystemIOProvider : ProviderBase
     {
+        private readonly StorageManager _storageManager;
+
         public Guid InstanceId { get; }
 
         public FileSystemIOProvider()
         {
             InstanceId = Guid.NewGuid();
+            var settings = new StorageManagerSettings();
+            _storageManager = new StorageManager(settings);
         }
 
         public ApplicationSettingsDataModel LoadApplicationSettings(string filename)
@@ -42,11 +50,14 @@ namespace ImageConverterLib.Providers
         {
             try
             {
-                var fs = File.OpenRead(filePath);
-                byte[] decompressedBytes = DeCompressDataStream(fs);
-                var ms = new MemoryStream(decompressedBytes);
+                T config= _storageManager.DeserializeObjectFromFile<T>(filePath, null);
 
-                return Serializer.Deserialize<T>(ms);
+                return config;
+                //var fs = File.OpenRead(filePath);
+                //byte[] decompressedBytes = DeCompressDataStream(fs);
+                //var ms = new MemoryStream(decompressedBytes);
+
+                //return Serializer.Deserialize<T>(ms);
 
             }
             catch (Exception exception)
@@ -62,13 +73,16 @@ namespace ImageConverterLib.Providers
             FileStream fs = null;
             try
             {
-                fs = File.Create(filePath);
-                var ms = new MemoryStream();
-                Serializer.NonGeneric.Serialize(ms, model);
+                bool result = _storageManager.SerializeObjectToFile(model,filePath,null);
 
-                byte[] compressedBytes = CompressDataStream(ms);
+                return true;
+                //fs = File.Create(filePath);
+                //var ms = new MemoryStream();
+                //Serializer.NonGeneric.Serialize(ms, model);
 
-                fs.Write(compressedBytes, 0, compressedBytes.Length);
+                //byte[] compressedBytes = CompressDataStream(ms);
+
+                //fs.Write(compressedBytes, 0, compressedBytes.Length);
             }
             catch (Exception exception)
             {

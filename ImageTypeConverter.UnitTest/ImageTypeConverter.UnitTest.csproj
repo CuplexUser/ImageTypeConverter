@@ -60,6 +60,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EncryptionTest.cs" />
     <Compile Include="UserDataModelTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -87,6 +88,10 @@
     <ProjectReference Include="..\ImageConvertionLib\ImageConverterLib.csproj">
       <Project>{3a6809a9-9b07-448f-b76a-77adae7636f7}</Project>
       <Name>ImageConverterLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SevenZip\SevenZip.csproj">
+      <Project>{99ba70df-965e-486f-be7c-50454faeb315}</Project>
+      <Name>SevenZip</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

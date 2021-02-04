@@ -73,17 +73,22 @@
     <Compile Include="ConfigHelper\AssemblyHelper.cs" />
     <Compile Include="Configuration\ImageFormatCollection.cs" />
     <Compile Include="DataModels\ApplicationSettingsDataModel.cs" />
+    <Compile Include="DataModels\FormStateDataModel.cs" />
     <Compile Include="DataModels\ImageDataModel.cs" />
+    <Compile Include="DataModels\PointDataModel.cs" />
     <Compile Include="DataModels\UserConfigDataModel.cs" />
+    <Compile Include="DataModels\VectorDataModel.cs" />
     <Compile Include="Helpers\FileNameParser.cs" />
     <Compile Include="ImageProcessing\Models\BatchWorkflowProgress.cs" />
     <Compile Include="ImageProcessing\Models\ImageBatchItem.cs" />
     <Compile Include="ImageProcessing\Models\ImageEncodingProgress.cs" />
     <Compile Include="ImageProcessing\Models\ImageProcessModel.cs" />
+    <Compile Include="Library\AutomapperProfiles\AppConfigProfile.cs" />
     <Compile Include="Library\BatchCompletedEventHandler.cs" />
     <Compile Include="Library\DataFlow\EventMessageQueue.cs" />
     <Compile Include="Library\EncryptionConfig.cs" />
     <Compile Include="Library\ImageModelComparison.cs" />
+    <Compile Include="Models\FormStateModel.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -164,6 +169,11 @@
     <None Include="Resources\ImgConvertionLib.snk" />
     <None Include="Resources\Local.pfx" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SevenZip\SevenZip.csproj">
+      <Project>{99ba70df-965e-486f-be7c-50454faeb315}</Project>
+      <Name>SevenZip</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

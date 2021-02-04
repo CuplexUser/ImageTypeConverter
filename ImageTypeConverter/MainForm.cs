@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -42,6 +44,8 @@ namespace ImageTypeConverter
         private readonly UserConfigService _userConfigService;
 
         private bool _ListDropActive;
+
+        private delegate void UpdateProgressBar(object sender, ImageEncodingProgress e);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
@@ -120,6 +124,31 @@ namespace ImageTypeConverter
             InitializeForm();
             _converterService.OnBatchCompleted += converterService_OnBatchCompleted;
             UpdateControlStateFromUserConfig();
+            lblStatusLabel.Text = "";
+            _applicationSettingsService.LoadSettings();
+
+            RestoreFormState(_applicationSettingsService.Settings);
+        }
+
+        private void RestoreFormState(ApplicationSettingsModel settings)
+        {
+            if (settings.FormStateModels.ContainsKey(Name))
+            {
+                try
+                {
+                    var model = settings.FormStateModels[Name];
+                    Width = model.FormSize.Width;
+                    Height = model.FormSize.Height;
+
+                    Location = new Point(model.FormPosition.X, model.FormPosition.Y);
+                    WindowState = (FormWindowState)model.WindowState;
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(exception, "RestoreFormState Exception");
+                }
+                
+            }
         }
 
 
@@ -131,6 +160,8 @@ namespace ImageTypeConverter
 
         private void BatchComplete(object sender, EventArgs e)
         {
+            lblStatusLabel.Text = "";
+            ConvertProgress.Value = ConvertProgress.Maximum;
             UpdateMenuState();
         }
 
@@ -375,18 +406,28 @@ namespace ImageTypeConverter
                 return;
             }
 
+            ConvertProgress.Minimum = 0;
+            ConvertProgress.Maximum = 100;
+            lblStatusLabel.Text = "";
             _userConfigService.Config.OutputFileExtension = ".jpeg";
             _userConfigService.Config.OutputDirectory = lnkOutputDirectory.Text;
             _converterService.InitBatch(_userConfigService.Config, _userConfigService.Config.OutputDirectory);
             var progress = new BatchWorkflowProgress(new Progress<ImageEncodingProgress>(Handler));
             //ProgressBar.
-            _converterService.ProcessBatch(null);
+            _converterService.ProcessBatch(progress);
             //UpdateMenuState();
         }
 
         private void Handler(ImageEncodingProgress obj)
         {
+            Invoke(new UpdateProgressBar(LocalThreadUpdateProgressBar), this,obj);
+        }
+
+        private void LocalThreadUpdateProgressBar(object sender, ImageEncodingProgress e)
+        {
             
+            ConvertProgress.Value = e.ProgressPercentage;
+            lblStatusLabel.Text = e.Text;
         }
 
         /// <summary>
@@ -445,5 +486,49 @@ namespace ImageTypeConverter
         }
 
         #endregion
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            FormStateModel model;
+            if (_applicationSettingsService.Settings.FormStateModels == null)
+            {
+                _applicationSettingsService.Settings.FormStateModels = new ConcurrentDictionary<string, FormStateModel>();
+            }
+
+            if (_applicationSettingsService.Settings.FormStateModels.ContainsKey(Name))
+            {
+                model = _applicationSettingsService.Settings.FormStateModels[Name];
+            }
+            else
+            {
+                model = new FormStateModel();
+                _applicationSettingsService.Settings.FormStateModels.Add(Name, model);
+            }
+
+            model.FormPosition = Location;
+            model.FormSize = new Size(Width, Height);
+            model.FormName = Name;
+            model.FormType = typeof(MainForm);
+
+            switch (WindowState)
+            {
+                case FormWindowState.Normal:
+                    model.WindowState= FormState.Normal;
+                    break;
+                case FormWindowState.Minimized:
+                    model.WindowState = FormState.Minimized;
+                    break;
+                case FormWindowState.Maximized:
+                    model.WindowState = FormState.Maximized;
+                    model.FormSize = MinimumSize;
+                    break;
+                default:
+                    model.WindowState = FormState.Normal;
+                    break;
+            }
+
+            _applicationSettingsService.SaveSettings();
+            e.Cancel = false;
+        }
     }
 }

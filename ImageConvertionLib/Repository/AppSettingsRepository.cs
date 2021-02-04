@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using AutoMapper;
 using ImageConverterLib.ConfigHelper;
@@ -27,6 +28,11 @@ namespace ImageConverterLib.Repository
             var userConfig = _ioProvider.LoadApplicationSettings(appConfigSettingsFilePath);
 
             var settings=  _mapper.Map<ApplicationSettingsModel>(userConfig);
+
+            if (settings.FormStateModels == null)
+            {
+                settings.FormStateModels = new ConcurrentDictionary<string, FormStateModel>();
+            }
 
             OnLoadSettingsCompleted();
             return settings;

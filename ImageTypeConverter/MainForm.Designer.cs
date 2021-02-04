@@ -79,6 +79,7 @@ namespace ImageTypeConverter
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBoxResult = new System.Windows.Forms.GroupBox();
             this.txtConversionResults = new System.Windows.Forms.RichTextBox();
+            this.lblStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.fileNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.imageFormatModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
@@ -280,7 +281,7 @@ namespace ImageTypeConverter
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -304,7 +305,8 @@ namespace ImageTypeConverter
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.ConvertProgress});
+            this.ConvertProgress,
+            this.lblStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 365);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -556,6 +558,12 @@ namespace ImageTypeConverter
             this.txtConversionResults.TabIndex = 0;
             this.txtConversionResults.Text = "";
             // 
+            // lblStatusLabel
+            // 
+            this.lblStatusLabel.Name = "lblStatusLabel";
+            this.lblStatusLabel.Size = new System.Drawing.Size(88, 21);
+            this.lblStatusLabel.Text = "[lblStatusLabel]";
+            // 
             // fileNameDataGridViewTextBoxColumn
             // 
             this.fileNameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -590,6 +598,7 @@ namespace ImageTypeConverter
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Image Type Batch Converter";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuMain.ResumeLayout(false);
             this.menuMain.PerformLayout();
@@ -660,6 +669,7 @@ namespace ImageTypeConverter
         private System.Windows.Forms.DataGridViewTextBoxColumn Extension;
         private new System.Windows.Forms.DataGridViewTextBoxColumn Size;
         private System.Windows.Forms.DataGridViewTextBoxColumn DirectoryPath;
+        private System.Windows.Forms.ToolStripStatusLabel lblStatusLabel;
     }
 }
 

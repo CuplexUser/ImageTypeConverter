@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ImageConverterLib.DataModels
@@ -44,5 +45,14 @@ namespace ImageConverterLib.DataModels
         /// </value>
         [DataMember(Name = "LastAppStartTime", Order = 4)]
         public DateTime LastAppStartTime { get; set; }
+
+        /// <summary>
+        /// Gets or sets the form state data models.
+        /// </summary>
+        /// <value>
+        /// The form state data models.
+        /// </value>
+        [DataMember(Name = "FormStateDataModels", Order = 5)]
+        public IList<FormStateDataModel> FormStateDataModels { get; set; }  
     }
 }

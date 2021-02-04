@@ -20,6 +20,7 @@ namespace ImageConverterLib.Services
         private CancellationToken _cancellationToken;
         private BatchWorkflowProgress _progress;
         private bool runWorkerThread = true;
+        private Task _mainTask;
 
         public event BatchCompletedEventHandler OnBatchCompleted;
 
@@ -56,14 +57,15 @@ namespace ImageConverterLib.Services
             }
         }
 
-        public Task<bool> ProcessBatch(BatchWorkflowProgress progress)
+        public void ProcessBatch(BatchWorkflowProgress progress)
         {
             if (IsRunning)
             {
                 throw new InvalidOperationException("ProcessBatch was called when already processing a batch");
             }
 
-            Task<bool> mainTask = null;
+            _mainTask?.Dispose();
+            _mainTask = null;
             _progress = progress;
 
             try
@@ -71,7 +73,7 @@ namespace ImageConverterLib.Services
                 IsRunning = true;
                 runWorkerThread = true;
                 _cancellationToken = new CancellationToken(false);
-                mainTask = new TaskFactory<bool>(_cancellationToken).StartNew(ProcessBatchTaskRunner, _cancellationToken);
+                _mainTask = new TaskFactory<bool>(_cancellationToken).StartNew(ProcessBatchTaskRunner, _cancellationToken);
             }
             catch (Exception exception)
             {
@@ -83,7 +85,7 @@ namespace ImageConverterLib.Services
             }
 
 
-            return mainTask;
+          
         }
 
         private bool ProcessBatchTaskRunner()

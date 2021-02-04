@@ -32,14 +32,6 @@ namespace ImageConverterLib.Library.AutomapperProfiles
                 .ForMember(s => s.OutputFileExtension, o => o.MapFrom(d => d.OutputFileExtension))
                 .ForMember(s => s.OutputDirectory, o => o.MapFrom(d => d.OutputDirectory))
                 .ReverseMap();
-
-            CreateMap<ApplicationSettingsModel, ApplicationSettingsDataModel>()
-                .ForMember(s => s.ImageFormatExtension, o => o.MapFrom(d => d.ImageFormatExtension))
-                .ForMember(s => s.InputDirectory, o => o.MapFrom(d => d.InputDirectory))
-                .ForMember(s => s.LastAppStartTime, o => o.MapFrom(d => d.LastAppStartTime))
-                .ForMember(s => s.OutputDirectory, o => o.MapFrom(d => d.OutputDirectory))
-                .ReverseMap();
-
         }
     }
 }
