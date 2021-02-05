@@ -34,7 +34,7 @@ namespace ImageConverterLib.DataModels
         /// <value>
         /// The path.
         /// </value>
-        [DataMember(Name = "DirectoryPath", Order = 3)]
+        [DataMember(Name = "DirectoryName", Order = 3)]
         public string DirectoryPath { get; set; }
 
         /// <summary>

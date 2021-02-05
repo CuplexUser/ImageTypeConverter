@@ -405,10 +405,10 @@ namespace ImageTypeConverter
             this.Size.Name = "Size";
             this.Size.ReadOnly = true;
             // 
-            // DirectoryPath
+            // DirectoryName
             // 
             this.DirectoryPath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DirectoryPath.DataPropertyName = "DirectoryPath";
+            this.DirectoryPath.DataPropertyName = "DirectoryName";
             this.DirectoryPath.HeaderText = "Directory";
             this.DirectoryPath.MinimumWidth = 20;
             this.DirectoryPath.Name = "DirectoryPath";

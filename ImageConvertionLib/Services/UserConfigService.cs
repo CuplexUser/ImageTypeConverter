@@ -160,7 +160,7 @@ namespace ImageConverterLib.Services
                 model.FileName = fi.Name;
                 model.CreationTime = fi.CreationTime;
                 model.Extension = fi.Extension;
-                model.DirectoryPath = fi.DirectoryName;
+                model.DirectoryName = fi.DirectoryName;
                 model.FileSize = fi.Length;
                 model.Size = FileNameParser.GetFileSizeWithPrefix(model.FileSize);
 

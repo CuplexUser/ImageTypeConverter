@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ImageConverterLib.Helpers;
 
 namespace ImageConverterLib.Models
 {
@@ -8,10 +9,20 @@ namespace ImageConverterLib.Models
     /// </summary>
     public class ImageModel
     {
-        protected ImageModel(string filePath)
+        protected ImageModel(string filePath, Guid uniqueId)
         {
-            UniqueId = Guid.NewGuid();
+            UniqueId = uniqueId;
             FilePath = filePath;
+
+            // Create FileInfo object
+            FileInfo fi = new FileInfo(filePath);
+
+            FileName = fi.Name;
+            CreationTime = fi.CreationTime;
+            Extension = fi.Extension;
+            DirectoryName = fi.DirectoryName;
+            FileSize = fi.Length;
+            Size = FileNameParser.GetFileSizeWithPrefix(fi.Length);
         }
 
         public static ImageModel CreateImageModel(string filePath)
@@ -21,14 +32,13 @@ namespace ImageConverterLib.Models
                 throw new ArgumentException("File does not exist or is inaccessable.", nameof(filePath));
             }
 
-            var imageModel = new ImageModel(filePath);
+            var imageModel = new ImageModel(filePath, Guid.NewGuid());
             return imageModel;
         }
 
-        public ImageModel(string filePath, Guid uniqueId)
+        public ImageModel()
         {
-            FilePath = filePath;
-            UniqueId = uniqueId;
+
         }
 
         /// <summary>
@@ -69,7 +79,7 @@ namespace ImageConverterLib.Models
         /// <value>
         ///     The directory path.
         /// </value>
-        public string DirectoryPath { get; set; }
+        public string DirectoryName { get; set; }
 
         /// <summary>
         ///     Gets or sets the display name.

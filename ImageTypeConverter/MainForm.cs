@@ -80,9 +80,9 @@ namespace ImageTypeConverter
 
         private void UpdateControlStateFromUserConfig()
         {
-            if (lnkOutputDirectory.Text != _userConfigService.Config.OutputDirectory)
+            if (lnkOutputDirectory.Text != _applicationSettingsService.Settings.OutputDirectory)
             {
-                lnkOutputDirectory.Text = _userConfigService.Config.OutputDirectory;
+                lnkOutputDirectory.Text = _applicationSettingsService.Settings.OutputDirectory;
                 lnkOutputDirectory.Links.Clear();
                 lnkOutputDirectory.Links.Add(0, lnkOutputDirectory.Text.Length, lnkOutputDirectory.Text);
             }
@@ -90,7 +90,7 @@ namespace ImageTypeConverter
 
         private void UpdateMenuState()
         {
-            startBatchConvertionToolStripMenuItem.Enabled = !_converterService.IsRunning;
+            startBatchConvertionToolStripMenuItem.Enabled = !_converterService.IsRunningBatch;
         }
 
 
@@ -115,6 +115,7 @@ namespace ImageTypeConverter
             if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
             {
                 _userConfigService.SetOutputFolder(folderBrowserDialog.SelectedPath);
+                _applicationSettingsService.Settings.OutputDirectory = folderBrowserDialog.SelectedPath;
                 UpdateControlStateFromUserConfig();
             }
         }
@@ -123,9 +124,9 @@ namespace ImageTypeConverter
         {
             InitializeForm();
             _converterService.OnBatchCompleted += converterService_OnBatchCompleted;
-            UpdateControlStateFromUserConfig();
             lblStatusLabel.Text = "";
             _applicationSettingsService.LoadSettings();
+            UpdateControlStateFromUserConfig();
 
             RestoreFormState(_applicationSettingsService.Settings);
         }
@@ -409,7 +410,7 @@ namespace ImageTypeConverter
             ConvertProgress.Minimum = 0;
             ConvertProgress.Maximum = 100;
             lblStatusLabel.Text = "";
-            _userConfigService.Config.OutputFileExtension = ".jpeg";
+            _userConfigService.Config.OutputFileExtension = ".jpg";
             _userConfigService.Config.OutputDirectory = lnkOutputDirectory.Text;
             _converterService.InitBatch(_userConfigService.Config, _userConfigService.Config.OutputDirectory);
             var progress = new BatchWorkflowProgress(new Progress<ImageEncodingProgress>(Handler));
@@ -489,6 +490,8 @@ namespace ImageTypeConverter
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            //_applicationSettingsService.Settings.OutputDirectory = lnkOutputDirectory.Text;
+
             FormStateModel model;
             if (_applicationSettingsService.Settings.FormStateModels == null)
             {

@@ -42,9 +42,8 @@ namespace ImageTypeConverter
                 // Begin startup async jobs
                 ApplicationSettingsService settingsService = scope.Resolve<ApplicationSettingsService>();
 
-                //settingsService.
+                Log.Information("Application starting");
 
-                        
                 Task.Delay(1000);
                 try
                 {
@@ -56,10 +55,6 @@ namespace ImageTypeConverter
                 {
                     Log.Fatal(ex, "Main program failureException: {Message}", ex.Message);
                 }
-
-
-
-                //settingsService.SaveSettings();
             }
 
             //Application.Run(new FormMain());

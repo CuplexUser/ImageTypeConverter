@@ -70,35 +70,15 @@ namespace ImageConverterLib.Providers
 
         private bool SaveConfig(string filePath, object model)
         {
-            FileStream fs = null;
             try
             {
-                bool result = _storageManager.SerializeObjectToFile(model,filePath,null);
-
-                return true;
-                //fs = File.Create(filePath);
-                //var ms = new MemoryStream();
-                //Serializer.NonGeneric.Serialize(ms, model);
-
-                //byte[] compressedBytes = CompressDataStream(ms);
-
-                //fs.Write(compressedBytes, 0, compressedBytes.Length);
+                return _storageManager.SerializeObjectToFile(model, filePath, null);
             }
             catch (Exception exception)
             {
                 Log.Error(exception, "Exception thrown in the internal SaveConfig function.");
                 return false;
             }
-            finally
-            {
-                if (fs != null)
-                {
-                    fs.Flush(true);
-                    fs.Close();
-                }
-            }
-
-            return true;
         }
 
 

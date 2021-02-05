@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
@@ -12,15 +13,17 @@ using Serilog;
 
 namespace ImageConverterLib.Services
 {
-    public class ImageConverterService : ServiceBase
+    public class ImageConverterService : ServiceBase, IDisposable
     {
         private readonly ILifetimeScope _scope;
         private readonly IMapper _mapper;
         private List<BatchItemModel> _batchItems;
+        private CancellationTokenSource _cancellationTokenSource;
         private CancellationToken _cancellationToken;
         private BatchWorkflowProgress _progress;
         private bool runWorkerThread = true;
         private Task _mainTask;
+        private object lockObject = new object();
 
         public event BatchCompletedEventHandler OnBatchCompleted;
 
@@ -29,9 +32,15 @@ namespace ImageConverterLib.Services
             _scope = scope;
             _mapper = mapper;
             _batchItems = new List<BatchItemModel>();
+            _cancellationTokenSource = new CancellationTokenSource();
+            IsRunningBatch = false;
         }
 
-        public bool IsRunning { get; set; }
+        public bool IsRunningBatch
+        {
+            get;
+            private set;
+        }
 
         public void InitBatch(UserConfigModel config, string outputPath)
         {
@@ -50,6 +59,10 @@ namespace ImageConverterLib.Services
                 outputFile.FileSize = 0;
                 outputFile.SortOrder = i;
                 outputFile.Extension = config.OutputFileExtension;
+                outputFile.FileName = inputFile.FileName;
+
+                outputFile.FileName = outputFile.FileName.Replace(inputFile.Extension, outputFile.Extension);
+                outputFile.FilePath = Path.Combine(outputFile.DirectoryPath, outputFile.FileName);
 
                 var batchItem = new BatchItemModel(inputFile, outputFile);
                 _batchItems.Add(batchItem);
@@ -57,35 +70,63 @@ namespace ImageConverterLib.Services
             }
         }
 
-        public void ProcessBatch(BatchWorkflowProgress progress)
+        public bool ProcessBatch(BatchWorkflowProgress progress)
         {
-            if (IsRunning)
+            if (IsRunningBatch)
             {
-                throw new InvalidOperationException("ProcessBatch was called when already processing a batch");
+                return false;
+                //throw new InvalidOperationException("ProcessBatch was called when already processing a batch");
             }
 
-            _mainTask?.Dispose();
-            _mainTask = null;
             _progress = progress;
 
             try
             {
-                IsRunning = true;
+                IsRunningBatch = true;
                 runWorkerThread = true;
+                var token = _cancellationTokenSource.Token;
                 _cancellationToken = new CancellationToken(false);
-                _mainTask = new TaskFactory<bool>(_cancellationToken).StartNew(ProcessBatchTaskRunner, _cancellationToken);
+                _mainTask = new TaskFactory<bool>(token).StartNew(ProcessBatchTaskRunner, _cancellationToken);
+                _mainTask.GetAwaiter().OnCompleted(DisposeTask);
+                return true;
             }
             catch (Exception exception)
             {
                 Log.Error(exception, "ProcessBatch Exception");
             }
-            finally
+
+            return false;
+        }
+
+        private void DisposeTask()
+        {
+            if (_mainTask != null)
             {
-                IsRunning = false;
+                if (_mainTask.IsCompleted)
+                {
+                    _mainTask.Dispose();
+                    _mainTask = null;
+                }
+                else
+                {
+                    Log.Warning("DisposeTask: MainTask was not completed");
+                }
+            }
+        }
+
+        public bool AbortBatchRun()
+        {
+            if (IsRunningBatch)
+            {
+                runWorkerThread = false;
+                _mainTask.Wait(2500, _cancellationTokenSource.Token);
+                if (_mainTask.Status == TaskStatus.Running)
+                {
+                    _cancellationTokenSource.CancelAfter(TimeSpan.FromMilliseconds(250));
+                }
             }
 
-
-          
+            return false;
         }
 
         private bool ProcessBatchTaskRunner()
@@ -97,7 +138,7 @@ namespace ImageConverterLib.Services
             string text = "";
             foreach (var batchItem in _batchItems)
             {
-                bool outputFileWritten = converter.ConvertImage(batchItem.InputFile,batchItem.OutputFile);
+                bool outputFileWritten = converter.ConvertImage(batchItem.InputFile, batchItem.OutputFile);
                 batchItem.IsCompleted = outputFileWritten;
 
                 if (index == _batchItems.Count)
@@ -105,7 +146,7 @@ namespace ImageConverterLib.Services
                     text = "Completed image convertion job.";
                 }
 
-                _progress?.Report(new ImageEncodingProgressHandler {FilesCompleted = index ,FileCount = filesToConvert , Text = text});
+                _progress?.Report(new ImageEncodingProgressHandler { FilesCompleted = index, FileCount = filesToConvert, Text = text });
                 index++;
 
                 if (!runWorkerThread)
@@ -115,8 +156,15 @@ namespace ImageConverterLib.Services
             }
 
             TimeSpan completionTime = DateTime.Now - starTime;
-            OnBatchCompleted?.Invoke(new BatchEventArgs() {SuccessFul = true, TimeSpentProcessing = completionTime });
+            IsRunningBatch = false;
+            OnBatchCompleted?.Invoke(new BatchEventArgs() { SuccessFul = true, TimeSpentProcessing = completionTime });
             return true;
+        }
+
+        public void Dispose()
+        {
+            _cancellationTokenSource?.Dispose();
+            _mainTask?.Dispose();
         }
     }
 }

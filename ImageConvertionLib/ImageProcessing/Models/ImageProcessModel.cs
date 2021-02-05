@@ -1,7 +1,21 @@
-﻿namespace ImageConverterLib.ImageProcessing.Models
+﻿using System;
+
+namespace ImageConverterLib.ImageProcessing.Models
 {
     public class ImageProcessModel
     {
+        public ImageProcessModel()
+        {
+            ProcessModelId = Guid.NewGuid();
+        }
+
+        public ImageProcessModel(Guid processModelId)
+        {
+            ProcessModelId = processModelId;
+        }
+
+        public Guid ProcessModelId { get; private set; }
+
         /// <summary>
         /// Gets or sets the file path.
         /// </summary>
