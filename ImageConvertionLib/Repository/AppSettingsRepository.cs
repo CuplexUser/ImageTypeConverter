@@ -6,6 +6,7 @@ using ImageConverterLib.ConfigHelper;
 using ImageConverterLib.DataModels;
 using ImageConverterLib.Models;
 using ImageConverterLib.Providers;
+using Serilog;
 
 namespace ImageConverterLib.Repository
 {
@@ -23,11 +24,29 @@ namespace ImageConverterLib.Repository
             appConfigSettingsFilePath = Path.Combine(GlobalSettings.GetUserDataDirectoryPath(), settingsFilename);
         }
 
+        public static ApplicationSettingsModel GetDefaultApplicationSettings()
+        {
+            var settings = new ApplicationSettingsModel
+            {
+                ImageFormatExtension = "",
+                InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+                OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                LastAppStartTime = DateTime.Now
+            };
+
+            return settings;
+        }
+
         public ApplicationSettingsModel LoadSettings()
         {
-            var userConfig = _ioProvider.LoadApplicationSettings(appConfigSettingsFilePath);
+            var applicationConfig = _ioProvider.LoadApplicationSettings(appConfigSettingsFilePath);
+            var settings =  _mapper.Map<ApplicationSettingsModel>(applicationConfig);
 
-            var settings=  _mapper.Map<ApplicationSettingsModel>(userConfig);
+            if (settings == null) 
+            {
+                settings = GetDefaultApplicationSettings();
+                Log.Information("Creating default Application Settings");
+            }
 
             if (settings.FormStateModels == null)
             {

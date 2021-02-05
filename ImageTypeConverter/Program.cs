@@ -35,19 +35,12 @@ namespace ImageTypeConverter
             bool debugMode = ApplicationBuildConfig.DebugMode;
             GlobalSettings.Initialize(Assembly.GetExecutingAssembly().GetName().Name, !debugMode);
 
-            Log.Verbose("Application started");
+            Log.Information("Application started");
 
             using (var scope = Container.BeginLifetimeScope())
             {
-                // Begin startup async jobs
-                ApplicationSettingsService settingsService = scope.Resolve<ApplicationSettingsService>();
-
-                Log.Information("Application starting");
-
-                Task.Delay(1000);
                 try
                 {
-
                     MainForm frmMain = scope.Resolve<MainForm>();
                     Application.Run(frmMain);
                 }

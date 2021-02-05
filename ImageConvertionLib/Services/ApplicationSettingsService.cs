@@ -28,7 +28,7 @@ namespace ImageConverterLib.Services
                 _applicationSettings = _appSettingsRepository.LoadSettings();
                 if (_applicationSettings == null)
                 {
-                    _applicationSettings = GetDefaultApplicationSettings();
+                    _applicationSettings = AppSettingsRepository.GetDefaultApplicationSettings();
                     _appSettingsRepository.SaveSettings(_applicationSettings);
                 }
 
@@ -42,14 +42,6 @@ namespace ImageConverterLib.Services
 
             _appSettingsRepository.LoadSettingsCompleted += _appSettingsFileRepository_LoadSettingsCompleted;
         }
-
-        private ApplicationSettingsModel GetDefaultApplicationSettings()
-        {
-            var settings = new ApplicationSettingsModel {ImageFormatExtension = "", InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer), LastAppStartTime = DateTime.Now};
-
-            return settings;
-        }
-
 
         public void SetSettingsStateModified()
         {
@@ -137,6 +129,5 @@ namespace ImageConverterLib.Services
 
             return result;
         }
-
     }
 }

@@ -8,5 +8,20 @@ namespace ImageTypeConverter
         {
             InitializeComponent();
         }
+
+        private void SettingsForm_Load(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void btnOk_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        private void btnCancel_Click(object sender, System.EventArgs e)
+        {
+
+        }
     }
 }

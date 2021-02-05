@@ -59,6 +59,9 @@ namespace SevenZip.Storage
 
         public T DeserializeObjectFromFile<T>(string path, IProgress<StorageManagerProgress> progress)
         {
+            if (!File.Exists(path))
+                return default(T);
+
             if (_settings.UseEncryption)
                 return DeSerializeAndDecompressObjectFromEncryptedFile<T>(path, progress);
 

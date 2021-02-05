@@ -60,12 +60,14 @@ namespace ImageTypeConverter
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.ConvertProgress = new System.Windows.Forms.ToolStripProgressBar();
+            this.lblStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.grpBoxImgInputSelect = new System.Windows.Forms.GroupBox();
             this.DataGridImgConvertQueue = new System.Windows.Forms.DataGridView();
             this.Extension = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Size = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DirectoryPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnBrowseFolder = new System.Windows.Forms.Button();
             this.lblDestinationDir = new System.Windows.Forms.Label();
@@ -79,17 +81,14 @@ namespace ImageTypeConverter
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBoxResult = new System.Windows.Forms.GroupBox();
             this.txtConversionResults = new System.Windows.Forms.RichTextBox();
-            this.lblStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.fileNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.imageModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.imageFormatModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.menuMain.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.grpBoxImgInputSelect.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             this.panel1.SuspendLayout();
             this.grpBoxResult.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -332,12 +331,17 @@ namespace ImageTypeConverter
             this.ConvertProgress.Name = "ConvertProgress";
             this.ConvertProgress.Size = new System.Drawing.Size(300, 20);
             // 
+            // lblStatusLabel
+            // 
+            this.lblStatusLabel.Name = "lblStatusLabel";
+            this.lblStatusLabel.Size = new System.Drawing.Size(88, 21);
+            this.lblStatusLabel.Text = "[lblStatusLabel]";
+            // 
             // openFileDialog
             // 
-            this.openFileDialog.Filter = "WEBP Images|*.webp|Tif images|*.tif";
-            this.openFileDialog.InitialDirectory = "D:\\Blandat";
+            this.openFileDialog.Filter = "WEBP Images (*.webp)|*.webp|Tif images (*.tiff;*.tif)|*.tiff;*.tif|All files (*.*" +
+    ")|*.*";
             this.openFileDialog.Multiselect = true;
-            this.openFileDialog.ShowReadOnly = true;
             // 
             // grpBoxImgInputSelect
             // 
@@ -370,7 +374,6 @@ namespace ImageTypeConverter
             this.DataGridImgConvertQueue.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridImgConvertQueue.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DataGridImgConvertQueue.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.fileNameDataGridViewTextBoxColumn,
             this.Extension,
             this.Size,
             this.DirectoryPath});
@@ -405,7 +408,7 @@ namespace ImageTypeConverter
             this.Size.Name = "Size";
             this.Size.ReadOnly = true;
             // 
-            // DirectoryName
+            // DirectoryPath
             // 
             this.DirectoryPath.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DirectoryPath.DataPropertyName = "DirectoryName";
@@ -558,30 +561,6 @@ namespace ImageTypeConverter
             this.txtConversionResults.TabIndex = 0;
             this.txtConversionResults.Text = "";
             // 
-            // lblStatusLabel
-            // 
-            this.lblStatusLabel.Name = "lblStatusLabel";
-            this.lblStatusLabel.Size = new System.Drawing.Size(88, 21);
-            this.lblStatusLabel.Text = "[lblStatusLabel]";
-            // 
-            // fileNameDataGridViewTextBoxColumn
-            // 
-            this.fileNameDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.fileNameDataGridViewTextBoxColumn.DataPropertyName = "FileName";
-            this.fileNameDataGridViewTextBoxColumn.FillWeight = 130F;
-            this.fileNameDataGridViewTextBoxColumn.HeaderText = "File Name";
-            this.fileNameDataGridViewTextBoxColumn.MinimumWidth = 20;
-            this.fileNameDataGridViewTextBoxColumn.Name = "fileNameDataGridViewTextBoxColumn";
-            this.fileNameDataGridViewTextBoxColumn.ReadOnly = true;
-            // 
-            // imageModelBindingSource
-            // 
-            this.imageModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageModel);
-            // 
-            // imageFormatModelBindingSource
-            // 
-            this.imageFormatModelBindingSource.DataSource = typeof(ImageConverterLib.Models.ImageFormatModel);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -606,10 +585,10 @@ namespace ImageTypeConverter
             this.statusStrip1.PerformLayout();
             this.grpBoxImgInputSelect.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.DataGridImgConvertQueue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.grpBoxResult.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.imageModelBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.imageFormatModelBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -665,7 +644,6 @@ namespace ImageTypeConverter
         private System.Windows.Forms.BindingSource imageFormatModelBindingSource;
         private System.Windows.Forms.DataGridView DataGridImgConvertQueue;
         private System.Windows.Forms.BindingSource imageModelBindingSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn fileNameDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn Extension;
         private new System.Windows.Forms.DataGridViewTextBoxColumn Size;
         private System.Windows.Forms.DataGridViewTextBoxColumn DirectoryPath;

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using Autofac;
 using ImageConverterLib.Configuration;
@@ -13,6 +14,7 @@ using ImageConverterLib.Library;
 using ImageConverterLib.Library.DataFlow;
 using ImageConverterLib.Models;
 using ImageConverterLib.Services;
+using ImageTypeConverter.Properties;
 using Serilog;
 
 namespace ImageTypeConverter
@@ -128,6 +130,7 @@ namespace ImageTypeConverter
             _applicationSettingsService.LoadSettings();
             UpdateControlStateFromUserConfig();
 
+            Text = Settings.Default.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
             RestoreFormState(_applicationSettingsService.Settings);
         }
 
@@ -448,6 +451,9 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var settingsForm = new SettingsForm();
+            settingsForm.ShowDialog(this);
+            settingsForm.Dispose();
         }
 
         #endregion
