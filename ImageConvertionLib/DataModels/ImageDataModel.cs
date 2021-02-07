@@ -43,7 +43,7 @@ namespace ImageConverterLib.DataModels
         /// <value>
         /// The display name.
         /// </value>
-        [DataMember(Name = "DisplayName", Order = 4)]
+        [DataMember(Name = "PublicName", Order = 4)]
         public string DisplayName { get; set; }
 
         /// <summary>

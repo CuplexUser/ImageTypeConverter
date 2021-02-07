@@ -71,11 +71,9 @@
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Photomanip.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Photomanip.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>
@@ -103,22 +101,36 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>MyCodeSIgnCert.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release Build|AnyCPU'">
+    <OutputPath>bin\Deploy\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release Build|x64'">
+    <OutputPath>bin\Deploy\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data.Linq" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AboutApplicationBox.cs">
@@ -171,15 +183,6 @@
     <None Include="Properties\DataSources\ImageConverterLib.DataModels.ImageDataModel.datasource" />
     <None Include="Properties\DataSources\ImageConverterLib.Models.ImageFormatModel.datasource" />
     <None Include="Properties\DataSources\ImageConverterLib.Models.ImageModel.datasource" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -203,20 +206,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Autofac">
-      <Version>6.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection">
-      <Version>7.1.0</Version>
-    </PackageReference>
-    <PackageReference Include="AutoMapper">
-      <Version>10.1.1</Version>
-    </PackageReference>
     <PackageReference Include="AutoMapper.Contrib.Autofac.DependencyInjection">
       <Version>5.2.0</Version>
-    </PackageReference>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>2020.3.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces">
       <Version>5.0.0</Version>
@@ -229,8 +220,6 @@
     <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Iconshock-Cms-Image.ico" />
-    <Content Include="Photomanip.ico" />
     <Content Include="Resources\Franksouza183-Fs-Mimetypes-png.ico" />
     <Content Include="Resources\Iconhive-Galactica-Images.ico" />
     <Content Include="Resources\Itzikgur-My-Seven-Pictures-Nikon.ico" />
@@ -239,7 +228,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if "$(ConfigurationName)" == "Release" (
+    <PostBuildEvent>if "$(ConfigurationName)" == "Release Build" (
 cd $(TargetDir)
 set path="C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\"
 signtool sign /sha1 9AE05132DCC3A423E94AEC095DD9EBD24AB58848 $(TargetFileName)

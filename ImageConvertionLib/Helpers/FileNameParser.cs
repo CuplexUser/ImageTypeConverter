@@ -6,21 +6,7 @@ namespace ImageConverterLib.Helpers
 {
     public static class FileNameParser
     {
-        private static readonly string[] BytePrefix = { "b", "Kb", "Mb", "GB", "TB" };
-        //public static ImageModel UpdateImageModel(ref ImageModel model, string filePath)
-        //{
-        //    Regex fileNameRegex = new Regex(@"([\w]{1,200}\.[\w]{2,5}$)", RegexOptions.Singleline);
-        //    FileInfo fileInfo = new FileInfo(filePath);
-        //    model.FullPath = fileInfo.FullName;
-        //    model.CreationTime = fileInfo.CreationTime;
-            
-        //    model.DirectoryName = fileInfo.DirectoryName;
-        //    model.Extension = fileInfo.Extension;
-        //    model.FileName = fileInfo.Name;
-        //    model.DisplayName = $"{fileInfo.Name} - ({GetFileSizeWithPrefix(fileInfo.Length)})";
-
-        //    return model;
-        //}
+        private static readonly string[] BytePrefix = { "b", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb" };
 
         public static string GetFileNameFromPath(string filePath)
         {
@@ -32,29 +18,16 @@ namespace ImageConverterLib.Helpers
 
         public static string GetFileSizeWithPrefix(long length)
         {
-            string retVal = "";
-
-            int sizeIndex = 0;
-            double result = length;
-
-            while (result > 1024)
+            int index = 0;
+            double result = Convert.ToDouble(length);
+            while (length > 1024)
             {
-                sizeIndex++;
-                result = result / 1024;
+                index++;
+                length >>= 10;
             }
 
-            if (sizeIndex < 5)
-            {
-                result = Math.Round(result, 2);
-                retVal = result.ToString(CultureInfo.CurrentCulture.NumberFormat) + $" {BytePrefix[sizeIndex]}";
-            }
-            else
-            {
-                retVal = "N/A";
-            }
-
-
-            return retVal;
+            result = Math.Ceiling((result + length) / (1024 ^ index));
+            return result.ToString(CultureInfo.CurrentCulture.NumberFormat) + $" {BytePrefix[index]}";
         }
     }
 }
