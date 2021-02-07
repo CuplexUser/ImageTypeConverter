@@ -59,5 +59,24 @@ namespace ImageTypeConverter.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Type Converter.
+        /// </summary>
+        internal static string MainTitle {
+            get {
+                return ResourceManager.GetString("MainTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon Photomanip {
+            get {
+                object obj = ResourceManager.GetObject("Photomanip", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

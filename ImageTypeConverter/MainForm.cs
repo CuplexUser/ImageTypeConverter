@@ -67,10 +67,10 @@ namespace ImageTypeConverter
 
         private void InitializeForm()
         {
-            var imageTypeCollection = ImageFormatCollection.Create();
+            var imageTypeCollection = SupportedImageTypeOutputFormats.Create();
 
             imageFormatModelBindingSource.SuspendBinding();
-            imageFormatModelBindingSource.DataSource = imageTypeCollection.GetImageTypes();
+            imageFormatModelBindingSource.DataSource = imageTypeCollection.GetImgFormatModels();
             cboxImageFormat.DataSource = imageFormatModelBindingSource;
             cboxImageFormat.DisplayMember = imageTypeCollection.DisplayMember;
             cboxImageFormat.ValueMember = imageTypeCollection.ValueMember;
@@ -130,7 +130,7 @@ namespace ImageTypeConverter
             _applicationSettingsService.LoadSettings();
             UpdateControlStateFromUserConfig();
 
-            Text = Settings.Default.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
+            Text = Resources.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
             RestoreFormState(_applicationSettingsService.Settings);
         }
 
