@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Autofac;
 using ImageConverterLib.ConfigHelper;
 using ImageConverterLib.Configuration;
-using ImageConverterLib.Services;
 using ImageTypeConverter.Configuration;
 using Serilog;
 

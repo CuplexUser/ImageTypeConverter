@@ -6,7 +6,6 @@ namespace ImageConverterLib.ConfigHelper
 {
     public static class GlobalSettings
     {
-        public static bool Initialized => _isInitialized;
         internal const string KeyName = "ImgType986ebd18-ba81-4779-b6a7-c0b5dd4a80ab"; 
         private const string UserDbFileName = "ComputedHashData.bin";
         private static string _logFileName;
@@ -44,13 +43,6 @@ namespace ImageConverterLib.ConfigHelper
                 Directory.CreateDirectory(_userDataPath);
         }
 
-        public static string GetApplicationLogFilePath()
-        {
-            if (!_isInitialized)
-                throw new InvalidOperationException("GetApplicationLogDirectory() can only be called after initialization");
-
-            return Path.Combine(_userDataPath, _logFileName);
-        }
 
         private static string GetAssemblyPath(string fullAssemblyPath)
         {
@@ -63,20 +55,14 @@ namespace ImageConverterLib.ConfigHelper
             return null;
         }
 
-        public static string GetHashtableFilename()
-        {
-            if (!_isInitialized)
-                throw new InvalidOperationException("GetHashtableFilename() can only be called after initialization");
-
-            return Path.Combine(_userDataPath, UserDbFileName);
-        }
-
         public static string GetUserDataDirectoryPath()
         {
             if (!Initialized)
-                throw new InvalidOperationException("Default Config is not initialized!");
+                return null;
 
             return _userDataPath;
         }
+
+        public static bool Initialized { get; }
     }
 }

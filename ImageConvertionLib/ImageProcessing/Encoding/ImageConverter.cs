@@ -41,7 +41,7 @@ namespace ImageConverterLib.ImageProcessing.Encoding
                 Log.Error(ex, "ConvertImage Exception");
                 return false;
             }
-            
+
 
             return true;
         }

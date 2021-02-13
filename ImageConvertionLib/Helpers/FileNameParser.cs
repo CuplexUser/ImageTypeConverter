@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using System.Linq;
+using System.IO;
 
 namespace ImageConverterLib.Helpers
 {
@@ -10,10 +10,11 @@ namespace ImageConverterLib.Helpers
 
         public static string GetFileNameFromPath(string filePath)
         {
-            var pathSplit = filePath.Split("\\".ToCharArray());
-            string name = pathSplit.Last();
-
-            return name;
+            return Path.GetFileName(filePath);
+        }
+        public static string GetDirectoryNameFromFullPath(string filePath)
+        {
+            return Path.GetDirectoryName(filePath);
         }
 
         public static string GetFileSizeWithPrefix(long length)

@@ -1,20 +1,19 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("ImageTypeConverter.UnitTest")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Image Type Converter - Unit tests")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Cuplex Org")]
 [assembly: AssemblyProduct("ImageTypeConverter.UnitTest")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright ©  2021 Martin Dahl")]
+[assembly: AssemblyTrademark("Martin Dahl")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 
-[assembly: Guid("45d759f5-3e02-4843-87d4-ca53f764871c")]
+[assembly: Guid("ba446641-7646-4162-83a5-5a98e27ac4c1")]
 
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("1.0.2.0")]
+[assembly: AssemblyFileVersion("1.0.2.0")]

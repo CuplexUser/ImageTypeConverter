@@ -46,43 +46,6 @@ namespace ImageConverterLib.Library.AutofacModules
 
             // Register Automapper profiles for tImageConverterLib
             builder.RegisterAutoMapper(assembly);
-
-            //builder.Register(context => context.Resolve<MapperConfiguration>()
-            //        .CreateMapper())
-            //    .As<IMapper>()
-            //    .AutoActivate()
-            //    .SingleInstance();
-
-
-
-
-            //builder.RegisterAssemblyTypes(assembly)
-            //                .AssignableTo<Form>()
-            //                .AsSelf()
-            //                .InstancePerDependency();
         }
-
-
-        //builder.Register(Configure)
-        //                .AutoActivate()
-        //                .AsSelf()
-        //                .AsImplementedInterfaces()
-        //                .SingleInstance();
-
-        //private static MapperConfiguration Configure(IComponentContext context)
-        //{
-        //    var configuration = new MapperConfiguration(cfg =>
-        //    {
-        //        var innerContext = context.Resolve<IComponentContext>();
-        //        cfg.ConstructServicesUsing(innerContext.Resolve);
-
-        //        foreach (var profile in context.Resolve<IEnumerable<Profile>>())
-        //        {
-        //            cfg.AddProfile(profile);
-        //        }
-        //    });
-
-        //    return configuration;
-        //}
     }
 }
