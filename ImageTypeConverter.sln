@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageConverterLib", "ImageConvertionLib\ImageConverterLib.csproj", "{3A6809A9-9B07-448F-B76A-77ADAE7636F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageTypeConverter.Console", "ImageTypeConverter.Console\ImageTypeConverter.Console.csproj", "{890857E7-B9A5-4C67-9914-16E4C5CC102E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3A6809A9-9B07-448F-B76A-77ADAE7636F7} = {3A6809A9-9B07-448F-B76A-77ADAE7636F7}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SevenZip", "SevenZip\SevenZip.csproj", "{99BA70DF-965E-486F-BE7C-50454FAEB315}"
 EndProject

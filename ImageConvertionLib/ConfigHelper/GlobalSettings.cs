@@ -4,15 +4,31 @@ using System.Reflection;
 
 namespace ImageConverterLib.ConfigHelper
 {
-    public static class GlobalSettings
+    public class GlobalSettings
     {
         internal const string KeyName = "ImgType986ebd18-ba81-4779-b6a7-c0b5dd4a80ab"; 
         private const string UserDbFileName = "ComputedHashData.bin";
         private static string _logFileName;
         private static string _userDataPath;
         private static bool _isInitialized;
+        private static GlobalSettings _instance;
 
-        public static void UnitTestInitialize(string testDataPath)
+        public Guid InstanceID { get; } = Guid.NewGuid();
+
+        public static GlobalSettings Settings
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new GlobalSettings();
+                }
+
+                return _instance;
+            }
+        }
+
+        public void UnitTestInitialize(string testDataPath)
         {
             if (_isInitialized)
                 return;
@@ -26,7 +42,7 @@ namespace ImageConverterLib.ConfigHelper
                 Directory.CreateDirectory(_userDataPath);
         }
 
-        public static void Initialize(string executableAssemblyName, bool useApplicationDataFolder)
+        public void Initialize(string executableAssemblyName, bool useApplicationDataFolder)
         {
             if (_isInitialized)
                 return;
@@ -44,7 +60,7 @@ namespace ImageConverterLib.ConfigHelper
         }
 
 
-        private static string GetAssemblyPath(string fullAssemblyPath)
+        private string GetAssemblyPath(string fullAssemblyPath)
         {
             if (fullAssemblyPath != null)
             {
@@ -55,14 +71,17 @@ namespace ImageConverterLib.ConfigHelper
             return null;
         }
 
-        public static string GetUserDataDirectoryPath()
+        public string GetUserDataDirectoryPath()
         {
-            if (!Initialized)
+            if (!IsInitialized)
                 return null;
 
             return _userDataPath;
         }
 
-        public static bool Initialized { get; }
+        public bool IsInitialized
+        {
+            get { return _isInitialized; }
+        }
     }
 }

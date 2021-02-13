@@ -14,14 +14,15 @@ namespace ImageConverterLib.Repository
     {
         private readonly FileSystemIOProvider _ioProvider;
         private string appConfigSettingsFilePath;
-        private const string settingsFilename = " ImageConverterSettings.bin";
+        private const string settingsFilename = "ImageConverterSettings.bin";
         private IMapper _mapper;
 
         public AppSettingsRepository(IMapper mapper)
         {
             _mapper = mapper;
             _ioProvider = new FileSystemIOProvider();
-            appConfigSettingsFilePath = Path.Combine(GlobalSettings.GetUserDataDirectoryPath(), settingsFilename);
+
+            appConfigSettingsFilePath = Path.Combine(GlobalSettings.Settings.GetUserDataDirectoryPath(), settingsFilename);
         }
 
         public static ApplicationSettingsModel GetDefaultApplicationSettings()

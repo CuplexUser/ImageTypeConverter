@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -31,7 +32,8 @@ namespace ImageTypeConverter
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(true);
             bool debugMode = ApplicationBuildConfig.DebugMode;
-            GlobalSettings.Initialize(Assembly.GetExecutingAssembly().GetName().Name, !debugMode);
+            GlobalSettings.Settings.Initialize(Assembly.GetExecutingAssembly().GetName().Name, !debugMode);
+            Debug.WriteLine(GlobalSettings.Settings.InstanceID);
 
             Log.Information("Application started");
 
@@ -40,6 +42,7 @@ namespace ImageTypeConverter
                 try
                 {
                     MainForm frmMain = scope.Resolve<MainForm>();
+                    Debug.WriteLine(GlobalSettings.Settings.InstanceID);
                     Application.Run(frmMain);
                 }
                 catch (Exception ex)

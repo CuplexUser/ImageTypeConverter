@@ -1,4 +1,4 @@
-﻿namespace ImageTypeConverter.UnitTest.Services
+﻿namespace ImageTypeConverter.UnitTest.Service
 {
     public class AppSettingsServiceTest
     {

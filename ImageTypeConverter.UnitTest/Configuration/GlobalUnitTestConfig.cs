@@ -9,6 +9,7 @@ namespace ImageTypeConverter.UnitTest.Configuration
     {
         private static string _tempDataPath = null;
         private static string _testRunnerOutputPath = null;
+        private const string _appSettingsFilename = "ImageConverterSettings.bin";
 
         internal static string TempDataPath
         {
@@ -16,31 +17,32 @@ namespace ImageTypeConverter.UnitTest.Configuration
             {
                 if (string.IsNullOrEmpty(_tempDataPath))
                 {
-                    _tempDataPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "..\\..\\..\\TempTestData");
+                    _tempDataPath = Path.GetFullPath(Path.Combine(Assembly.GetExecutingAssembly().Location, "..\\..\\..\\TempTestData"));
                 }
 
                 return _tempDataPath;
             }
         }  
         
-        internal static string UnitTestOutputPath
+        internal static string TestDataInputPath
         {
             get
             {
                 if (string.IsNullOrEmpty(_testRunnerOutputPath))
                 {
-                    _testRunnerOutputPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "..\\..\\..\\TestRunnerOutputPath");
+                    _testRunnerOutputPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "..\\..\\..\\TestDataInput");
                 }
 
                 return _tempDataPath;
             }
         }
 
+        public static string AppSettingsFilename => _appSettingsFilename;
 
 
         internal static void Initialize(TestContext context)
         {
-            GlobalSettings.UnitTestInitialize(TempDataPath);
+            GlobalSettings.Settings.UnitTestInitialize(TempDataPath);
         }
 
     }

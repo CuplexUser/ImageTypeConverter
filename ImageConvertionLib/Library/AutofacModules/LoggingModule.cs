@@ -11,7 +11,7 @@ namespace ImageConverterLib.Library.AutofacModules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            var logLevel = LogEventLevel.Debug;
+            var logLevel = LogEventLevel.Information;
             if (!ApplicationBuildConfig.DebugMode)
             {
                 logLevel = LogEventLevel.Warning;
