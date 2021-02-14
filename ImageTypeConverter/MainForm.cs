@@ -212,6 +212,10 @@ namespace ImageTypeConverter
                     }
                 }
 
+                if (selectedFiles.Count > 0)
+                {
+                    _applicationSettingsService.Settings.InputDirectory = Path.GetDirectoryName(selectedFiles[selectedFiles.Count - 1]);
+                }
 
                 imageModelBindingSource.SuspendBinding();
                 imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
@@ -512,7 +516,9 @@ namespace ImageTypeConverter
         private void LocalThreadUpdateProgressBar(object sender, ImageEncodingProgress e)
         {
             ConvertProgress.Value = e.ProgressPercentage;
-            lblStatusLabel.Text = e.Text;
+
+            lblStatusLabel.Text = e.Text.Length >= 64 ? e.Text.Substring(0, 64) + "..." : e.Text;
+
             txtConversionResults.AppendText(e.Text + "\n");
         }
 
