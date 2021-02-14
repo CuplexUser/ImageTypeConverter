@@ -60,7 +60,7 @@ namespace ImageConverterLib.Services
                 outputFile.SortOrder = i;
                 outputFile.Extension = config.OutputFileExtension;
                 outputFile.FileName = inputFile.FileName;
-
+                
                 outputFile.FileName = outputFile.FileName.Replace(inputFile.Extension, outputFile.Extension);
                 outputFile.FilePath = Path.Combine(outputFile.DirectoryPath, outputFile.FileName);
 
@@ -135,15 +135,29 @@ namespace ImageConverterLib.Services
             var converter = new ImageConverter();
             int index = 1;
             int filesToConvert = _batchItems.Count;
-            string text = "";
             foreach (var batchItem in _batchItems)
             {
                 bool outputFileWritten = converter.ConvertImage(batchItem.InputFile, batchItem.OutputFile);
+                if (!outputFileWritten)
+                    Log.Debug($"Failed to convert batchItem: {batchItem.InputFile.FileName} to {batchItem.OutputFile.FileName}");
+
                 batchItem.IsCompleted = outputFileWritten;
+
+                // Update progress
+                string text = "";
+
+                if (outputFileWritten)
+                {
+                    text = $"Converted image source: {batchItem.InputFile.FileName} to destination: {batchItem.OutputFile.FilePath}";
+                }
+                else
+                {
+                    text = $"Failed to convert image source: {batchItem.InputFile.FileName} to destination: {batchItem.OutputFile.FilePath}";
+                }
 
                 if (index == _batchItems.Count)
                 {
-                    text = "Completed image convertion job.";
+                    text += "\nCompleted image batch job.";
                 }
 
                 _progress?.Report(new ImageEncodingProgressHandler { FilesCompleted = index, FileCount = filesToConvert, Text = text });

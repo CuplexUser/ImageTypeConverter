@@ -47,8 +47,6 @@ namespace ImageTypeConverter
 
         private bool _ListDropActive;
 
-        private delegate void UpdateProgressBar(object sender, ImageEncodingProgress e);
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
         /// </summary>
@@ -77,7 +75,13 @@ namespace ImageTypeConverter
             imageFormatModelBindingSource.ResetBindings(true);
             imageFormatModelBindingSource.ResumeBinding();
 
-            if (cboxImageFormat.Items.Count > 0) cboxImageFormat.SelectedIndex = 0;
+            if (cboxImageFormat.Items.Count > 0)
+                cboxImageFormat.SelectedIndex = 0;
+
+            openFileDialog.Filter = "WEBP Images (*.webp)|*.webp|Tif images (*.tiff;*.tif)|*.tiff;*.tif|Jpeg Images (*.jpg; *.jpeg)|*.jpg;*.jpeg|Png Images (*.png)|*.png|Bitmap Images (*.bmp)|*.bmp|" +
+                                    "All files (*.*)|*.*";
+
+            UpdateControlStateFromUserConfig();
         }
 
         private void UpdateControlStateFromUserConfig()
@@ -87,6 +91,23 @@ namespace ImageTypeConverter
                 lnkOutputDirectory.Text = _applicationSettingsService.Settings.OutputDirectory;
                 lnkOutputDirectory.Links.Clear();
                 lnkOutputDirectory.Links.Add(0, lnkOutputDirectory.Text.Length, lnkOutputDirectory.Text);
+            }
+
+            if (!string.IsNullOrEmpty(_applicationSettingsService.Settings.InputDirectory)) openFileDialog.InitialDirectory = _applicationSettingsService.Settings.InputDirectory;
+
+            string setExtenstion = _applicationSettingsService.Settings.ImageFormatExtension;
+            string selectedText = (cboxImageFormat.SelectedItem as ImageFormatModel).Extension;
+            if (!string.IsNullOrEmpty(setExtenstion) && selectedText != setExtenstion)
+            {
+                foreach (var item in cboxImageFormat.Items)
+                {
+                    if (item is ImageFormatModel model && model.Extension == setExtenstion)
+                    {
+                        cboxImageFormat.SelectedItem = model;
+                        break;
+                    }
+                }
+
             }
         }
 
@@ -151,7 +172,6 @@ namespace ImageTypeConverter
                 {
                     Log.Error(exception, "RestoreFormState Exception");
                 }
-                
             }
         }
 
@@ -166,6 +186,7 @@ namespace ImageTypeConverter
         {
             lblStatusLabel.Text = "";
             ConvertProgress.Value = ConvertProgress.Maximum;
+            ClearSourceImageList(false);
             UpdateMenuState();
         }
 
@@ -185,8 +206,10 @@ namespace ImageTypeConverter
                     bool isValid = _userConfigService.AddImageToProcessQueue(filePath, ref messageQueue);
 
                     if (!isValid)
+                    {
                         foreach (string message in messageQueue.GetMessageEnumerable())
                             MessageBox.Show(message, "Failed to add image", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
                 }
 
 
@@ -215,9 +238,12 @@ namespace ImageTypeConverter
 
             foreach (DataGridViewRow row in selectedRows)
                 if (row.DataBoundItem is ImageModel model)
+                {
                     if (!_userConfigService.RemoveImageFromProcessQueue(model.UniqueId, ref messageQueue))
-                        foreach (string message in messageQueue.GetMessageEnumerable())
-                            MessageBox.Show(message, "Failed to remove enqueued item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    {
+                        foreach (string message in messageQueue.GetMessageEnumerable()) MessageBox.Show(message, "Failed to remove enqueued item", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    }
+                }
 
             imageModelBindingSource.SuspendBinding();
             imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
@@ -252,6 +278,70 @@ namespace ImageTypeConverter
 
             foreach (var model in rowSelection.Select(guid => _userConfigService.GetImageModelById(guid))) DataGridImgConvertQueue.Rows[model.SortOrder].Selected = true;
         }
+
+        private void ClearSourceImageList(bool prompt)
+        {
+            if (_userConfigService.Config.ImageModels.Count > 0)
+            {
+                if (prompt)
+                {
+                    bool result = MessageBox.Show($"Are you sure you want to clear the list with {_userConfigService.Config.ImageModels.Count} items", "Clear List?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
+                    if (!result)
+                        return;
+                }
+
+                imageModelBindingSource.SuspendBinding();
+                _userConfigService.ClearProcessQueue();
+                imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
+                imageModelBindingSource.ResumeBinding();
+                imageModelBindingSource.ResetBindings(true);
+            }
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            FormStateModel model;
+            if (_applicationSettingsService.Settings.FormStateModels == null) _applicationSettingsService.Settings.FormStateModels = new ConcurrentDictionary<string, FormStateModel>();
+
+            if (_applicationSettingsService.Settings.FormStateModels.ContainsKey(Name))
+                model = _applicationSettingsService.Settings.FormStateModels[Name];
+            else
+            {
+                model = new FormStateModel();
+                _applicationSettingsService.Settings.FormStateModels.Add(Name, model);
+            }
+
+            model.FormPosition = Location;
+            model.FormSize = new Size(Width, Height);
+            model.FormName = Name;
+            model.FormType = typeof(MainForm);
+
+            switch (WindowState)
+            {
+                case FormWindowState.Normal:
+                    model.WindowState = FormState.Normal;
+                    break;
+                case FormWindowState.Minimized:
+                    model.WindowState = FormState.Minimized;
+                    break;
+                case FormWindowState.Maximized:
+                    model.WindowState = FormState.Maximized;
+                    model.FormSize = MinimumSize;
+                    break;
+                default:
+                    model.WindowState = FormState.Normal;
+                    break;
+            }
+
+            if (cboxImageFormat.SelectedItem is ImageFormatModel formatModel)
+                _applicationSettingsService.Settings.ImageFormatExtension = formatModel.Extension;
+
+            _applicationSettingsService.Settings.OutputDirectory = lnkOutputDirectory.Text;
+            _applicationSettingsService.SaveSettings();
+            e.Cancel = false;
+        }
+
+        private delegate void UpdateProgressBar(object sender, ImageEncodingProgress e);
 
         private delegate void BatchCompletedEventHandler(object sender, EventArgs eventArgs);
 
@@ -376,15 +466,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void clearListToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_userConfigService.Config.ImageModels.Count > 0)
-                if (MessageBox.Show($"Are you sure you want to clear the list with {_userConfigService.Config.ImageModels.Count} items", "Clear List?", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-                {
-                    imageModelBindingSource.SuspendBinding();
-                    _userConfigService.ClearProcessQueue();
-                    imageModelBindingSource.DataSource = _userConfigService.Config.ImageModels;
-                    imageModelBindingSource.ResumeBinding();
-                    imageModelBindingSource.ResetBindings(true);
-                }
+            ClearSourceImageList(true);
         }
 
         /// <summary>
@@ -413,7 +495,7 @@ namespace ImageTypeConverter
             ConvertProgress.Minimum = 0;
             ConvertProgress.Maximum = 100;
             lblStatusLabel.Text = "";
-            _userConfigService.Config.OutputFileExtension = ".jpg";
+            _userConfigService.Config.OutputFileExtension = (cboxImageFormat.SelectedItem as ImageFormatModel).Extension;
             _userConfigService.Config.OutputDirectory = lnkOutputDirectory.Text;
             _converterService.InitBatch(_userConfigService.Config, _userConfigService.Config.OutputDirectory);
             var progress = new BatchWorkflowProgress(new Progress<ImageEncodingProgress>(Handler));
@@ -424,14 +506,14 @@ namespace ImageTypeConverter
 
         private void Handler(ImageEncodingProgress obj)
         {
-            Invoke(new UpdateProgressBar(LocalThreadUpdateProgressBar), this,obj);
+            Invoke(new UpdateProgressBar(LocalThreadUpdateProgressBar), this, obj);
         }
 
         private void LocalThreadUpdateProgressBar(object sender, ImageEncodingProgress e)
         {
-            
             ConvertProgress.Value = e.ProgressPercentage;
             lblStatusLabel.Text = e.Text;
+            txtConversionResults.AppendText(e.Text + "\n");
         }
 
         /// <summary>
@@ -480,8 +562,10 @@ namespace ImageTypeConverter
         private void lstImageConvertQueue_DragOver(object sender, DragEventArgs e)
         {
             if (_ListDropActive)
+            {
                 if ((e.AllowedEffect & DragDropEffects.Link) > 0)
                     e.Effect = DragDropEffects.Link;
+            }
         }
 
         private void lstImageConvertQueue_GiveFeedback(object sender, GiveFeedbackEventArgs e)
@@ -493,51 +577,5 @@ namespace ImageTypeConverter
         }
 
         #endregion
-
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //_applicationSettingsService.Settings.OutputDirectory = lnkOutputDirectory.Text;
-
-            FormStateModel model;
-            if (_applicationSettingsService.Settings.FormStateModels == null)
-            {
-                _applicationSettingsService.Settings.FormStateModels = new ConcurrentDictionary<string, FormStateModel>();
-            }
-
-            if (_applicationSettingsService.Settings.FormStateModels.ContainsKey(Name))
-            {
-                model = _applicationSettingsService.Settings.FormStateModels[Name];
-            }
-            else
-            {
-                model = new FormStateModel();
-                _applicationSettingsService.Settings.FormStateModels.Add(Name, model);
-            }
-
-            model.FormPosition = Location;
-            model.FormSize = new Size(Width, Height);
-            model.FormName = Name;
-            model.FormType = typeof(MainForm);
-
-            switch (WindowState)
-            {
-                case FormWindowState.Normal:
-                    model.WindowState= FormState.Normal;
-                    break;
-                case FormWindowState.Minimized:
-                    model.WindowState = FormState.Minimized;
-                    break;
-                case FormWindowState.Maximized:
-                    model.WindowState = FormState.Maximized;
-                    model.FormSize = MinimumSize;
-                    break;
-                default:
-                    model.WindowState = FormState.Normal;
-                    break;
-            }
-
-            _applicationSettingsService.SaveSettings();
-            e.Cancel = false;
-        }
     }
 }

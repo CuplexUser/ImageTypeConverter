@@ -174,9 +174,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
     <None Include="MyCodeSIgnCert.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\DataSources\ImageConverterLib.Configuration.ImageType.datasource" />

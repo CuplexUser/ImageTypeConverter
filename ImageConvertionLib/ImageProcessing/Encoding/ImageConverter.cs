@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
+using ImageConverterLib.Configuration;
 using ImageConverterLib.ImageProcessing.Models;
 using ImageProcessor;
 using ImageProcessor.Configuration;
@@ -25,7 +28,7 @@ namespace ImageConverterLib.ImageProcessing.Encoding
             try
             {
                 var imgData = factory.Load(sourceModel.FilePath);
-                imgData.Format(new JpegFormat());
+                imgData.Format(GetOutputFormat(destinationModel));
                 imgData.Save(destinationModel.FilePath);
 
                 if (!File.Exists(destinationModel.FilePath))
@@ -44,6 +47,33 @@ namespace ImageConverterLib.ImageProcessing.Encoding
 
 
             return true;
+        }
+
+        private ISupportedImageFormat GetOutputFormat(ImageProcessModel image)
+        {
+            //ImageProcessor.Imaging.Formats
+            switch (image.Extension)
+            {
+                case ".jpg":
+                case ".jpgeg":
+                    return new JpegFormat();
+                case ".png":
+                    return new PngFormat();
+                case ".tiff":
+                    return new TiffFormat();
+                case ".bmp":
+                    return new BitmapFormat();
+                case ".gif":
+                    return new GifFormat();
+                case ".webp":
+                    return new WebPFormat();
+
+                default:
+                    break;
+            }
+
+
+            return null;
         }
 
         //public enum ImageFormat

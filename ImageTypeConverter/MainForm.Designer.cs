@@ -339,8 +339,6 @@ namespace ImageTypeConverter
             // 
             // openFileDialog
             // 
-            this.openFileDialog.Filter = "WEBP Images (*.webp)|*.webp|Tif images (*.tiff;*.tif)|*.tiff;*.tif|All files (*.*" +
-    ")|*.*";
             this.openFileDialog.Multiselect = true;
             // 
             // grpBoxImgInputSelect
