@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -152,6 +153,9 @@ namespace ImageTypeConverter
             UpdateControlStateFromUserConfig();
 
             Text = Resources.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
+            Log.Information($"Last Application Start time was: {_applicationSettingsService.Settings.LastAppStartTime.ToString("yyyy-MM-dd @ HH:mm:ss", CultureInfo.CurrentUICulture)}");
+            _applicationSettingsService.Settings.LastAppStartTime=DateTime.Now;
+            
             RestoreFormState(_applicationSettingsService.Settings);
         }
 
@@ -318,7 +322,6 @@ namespace ImageTypeConverter
             model.FormPosition = Location;
             model.FormSize = new Size(Width, Height);
             model.FormName = Name;
-            model.FormType = typeof(MainForm);
 
             switch (WindowState)
             {
@@ -413,6 +416,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
         }
 
         /// <summary>
@@ -422,6 +426,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
         }
 
         /// <summary>
@@ -431,6 +436,7 @@ namespace ImageTypeConverter
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
         }
 
         /// <summary>
@@ -438,7 +444,7 @@ namespace ImageTypeConverter
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void toolStripMenuAddSourceFiles_Click(object sender, EventArgs e)
         {
             AddImagesUsingFileOpenDialog();
         }

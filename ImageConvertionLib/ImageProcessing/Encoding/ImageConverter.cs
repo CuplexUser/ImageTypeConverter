@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using ImageConverterLib.Configuration;
 using ImageConverterLib.ImageProcessing.Models;
 using ImageProcessor;
 using ImageProcessor.Configuration;
@@ -55,7 +52,7 @@ namespace ImageConverterLib.ImageProcessing.Encoding
             switch (image.Extension)
             {
                 case ".jpg":
-                case ".jpgeg":
+                case ".jpeg":
                     return new JpegFormat();
                 case ".png":
                     return new PngFormat();

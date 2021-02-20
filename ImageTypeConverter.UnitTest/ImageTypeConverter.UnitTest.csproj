@@ -78,6 +78,7 @@
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
     </Reference>
@@ -114,8 +115,13 @@
       <Project>{3a6809a9-9b07-448f-b76a-77adae7636f7}</Project>
       <Name>ImageConverterLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ImageTypeConverter\ImageTypeConverter.csproj">
+      <Project>{387B2F9B-6934-4173-ACA0-A8470D43B9F5}</Project>
+      <Name>ImageTypeConverter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Compare\" />
     <Folder Include="ObjectMapping\" />
     <Folder Include="TempOutput\" />
     <Folder Include="TestDataInput\" />

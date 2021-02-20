@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using Autofac;
 using AutoMapper;
-using ImageConverterLib.Configuration;
+using ImageConverterLib.Models;
 using ImageConverterLib.Repository;
 using ImageTypeConverter.UnitTest.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Serilog;
-using Serilog.Core;
 
 namespace ImageTypeConverter.UnitTest.Repository
 {
@@ -50,7 +52,7 @@ namespace ImageTypeConverter.UnitTest.Repository
         /// Verifies the default settings model.
         /// </summary>
         [TestMethod]
-        public void SaveAppSettingsOnDisk()
+        public void SaveAppSettingsToDisk()
         {
             var model = AppSettingsRepository.GetDefaultApplicationSettings();
 
@@ -76,11 +78,58 @@ namespace ImageTypeConverter.UnitTest.Repository
         {
             // instantiate default memory model
             var model = AppSettingsRepository.GetDefaultApplicationSettings();
-
-            Assert.IsNull(model.FormStateModels, "AppSettingsRepository failed to create valied default config", nameof(model.FormStateModels));
-
+            model.ImageFormatExtension = ".webp";
 
 
+            model.InputDirectory = GlobalUnitTestConfig.TestDataInputPath;
+            model.OutputDirectory = GlobalUnitTestConfig.TempDataPath;
+
+            Assert.IsNotNull(model.FormStateModels, "AppSettingsRepository failed to create valied default config", nameof(model.FormStateModels));
+            Assert.IsTrue(_repository.SaveSettings(model), "Failed to Save default Settings");
+
+            var loadedSettings = _repository.LoadSettings();
+
+            Assert.IsNotNull(loadedSettings, "Loaded Settings where null.");
+
+            // Do not compare form state dictionaries.
+            model.FormStateModels = loadedSettings.FormStateModels;
+
+            // Test each property
+            bool modelEquals = model.Equals(loadedSettings);
+            Assert.IsTrue(modelEquals, "model.Equals(loadedSettings) The loaded model where not identical to the saved model");
         }
+
+        [TestMethod]
+        public void FormStateTest()
+        {
+            var settingsModel = new ApplicationSettingsModel()
+            {
+                ImageFormatExtension = ".jpg",
+                FormStateModels = new Dictionary<string, FormStateModel>(),
+                LastAppStartTime = DateTime.Now,
+                InputDirectory = "",
+                OutputDirectory = ""
+            };
+
+            FormStateModel formStateModel = new FormStateModel()
+            {
+                FormName = "TestForm",
+                FormPosition = new Point(32,128),
+                WindowState = FormState.Maximized,
+                FormSize = new Size(247,377)
+            };
+
+            settingsModel.FormStateModels.Add(formStateModel.FormName, formStateModel);
+            Assert.IsTrue(_repository.SaveSettings(settingsModel), "SaveSettings(settingsModel) failed");
+
+            var loadedSettings = _repository.LoadSettings();
+
+            FormStateModel reconstructedFormState = loadedSettings.FormStateModels.Count > 0 ? loadedSettings.FormStateModels.Values.First() : null;
+            Assert.IsNotNull(reconstructedFormState,"reconstructedFormState != null");
+
+            // Test each property
+            bool objectsAreEqual = reconstructedFormState.Equals(formStateModel);
+            Assert.IsTrue(objectsAreEqual, "Reconstructed object not equal to original object.");
+        }   
     }
 }

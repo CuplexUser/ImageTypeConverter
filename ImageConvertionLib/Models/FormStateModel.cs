@@ -6,7 +6,7 @@ namespace ImageConverterLib.Models
     /// <summary>
     ///   FormStateModel
     /// </summary>
-    public class FormStateModel
+    public class FormStateModel 
     {
         /// <summary>
         /// Gets or sets the name of the form.
@@ -15,13 +15,7 @@ namespace ImageConverterLib.Models
         /// The name of the form.
         /// </value>
         public string FormName { get; set; }
-        /// <summary>
-        /// Gets or sets the type of the form.
-        /// </summary>
-        /// <value>
-        /// The type of the form.
-        /// </value>
-        public Type FormType { get; set; }
+
         /// <summary>
         /// Gets or sets the size of the form.
         /// </summary>
@@ -43,6 +37,28 @@ namespace ImageConverterLib.Models
         /// The state of the window.
         /// </value>
         public FormState WindowState { get; set; }
+
+        public bool Equals(FormStateModel other)
+        {
+            return FormName == other.FormName && 
+                   FormSize.Height == other.FormSize.Height &&
+                   FormSize.Width == other.FormSize.Width &&
+                   FormPosition.Y == other.FormPosition.Y &&
+                   FormPosition.X == other.FormPosition.X &&
+                   WindowState == other.WindowState;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = (FormName != null ? FormName.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ FormSize.GetHashCode();
+                hashCode = (hashCode * 397) ^ FormPosition.GetHashCode();
+                hashCode = (hashCode * 397) ^ (int)WindowState;
+                return hashCode;
+            }
+        }
     }
 
     /// <summary>
@@ -50,10 +66,10 @@ namespace ImageConverterLib.Models
     /// </summary>
     public enum FormState
     {
-        Normal=0,
+        Normal = 0,
         /// <summary>A minimized window.</summary>
-        Minimized=1,
+        Minimized = 1,
         /// <summary>A maximized window.</summary>
-        Maximized=2,
+        Maximized = 2,
     }
 }

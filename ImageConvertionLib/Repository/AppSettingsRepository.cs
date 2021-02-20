@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using AutoMapper;
 using ImageConverterLib.ConfigHelper;
@@ -32,7 +33,8 @@ namespace ImageConverterLib.Repository
                 ImageFormatExtension = "",
                 InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-                LastAppStartTime = DateTime.Now
+                LastAppStartTime = DateTime.Now,
+                FormStateModels = new Dictionary<string, FormStateModel>()
             };
 
             return settings;

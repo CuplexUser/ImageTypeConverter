@@ -36,7 +36,7 @@ namespace ImageTypeConverter
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuAddSourceFiles = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripSeparator();
             this.setOutputFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem5 = new System.Windows.Forms.ToolStripSeparator();
@@ -99,7 +99,7 @@ namespace ImageTypeConverter
             this.saveToolStripMenuItem,
             this.saveAsToolStripMenuItem,
             this.toolStripMenuItem4,
-            this.toolStripMenuItem1,
+            this.toolStripMenuAddSourceFiles,
             this.toolStripMenuItem3,
             this.setOutputFolderToolStripMenuItem,
             this.toolStripMenuItem5,
@@ -137,12 +137,12 @@ namespace ImageTypeConverter
             this.toolStripMenuItem4.Name = "toolStripMenuItem4";
             this.toolStripMenuItem4.Size = new System.Drawing.Size(183, 6);
             // 
-            // toolStripMenuItem1
+            // toolStripMenuAddSourceFiles
             // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
-            this.toolStripMenuItem1.Text = "&Add Source Files";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            this.toolStripMenuAddSourceFiles.Name = "toolStripMenuAddSourceFiles";
+            this.toolStripMenuAddSourceFiles.Size = new System.Drawing.Size(186, 22);
+            this.toolStripMenuAddSourceFiles.Text = "&Add Source Files";
+            this.toolStripMenuAddSourceFiles.Click += new System.EventHandler(this.toolStripMenuAddSourceFiles_Click);
             // 
             // toolStripMenuItem3
             // 
@@ -425,16 +425,16 @@ namespace ImageTypeConverter
             this.panel1.Controls.Add(this.lnkOutputDirectory);
             this.panel1.Location = new System.Drawing.Point(6, 275);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(411, 58);
+            this.panel1.Size = new System.Drawing.Size(400, 58);
             this.panel1.TabIndex = 15;
             // 
             // btnBrowseFolder
             // 
             this.btnBrowseFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBrowseFolder.Location = new System.Drawing.Point(274, 25);
+            this.btnBrowseFolder.Location = new System.Drawing.Point(272, 25);
             this.btnBrowseFolder.Margin = new System.Windows.Forms.Padding(3, 3, 3, 10);
             this.btnBrowseFolder.Name = "btnBrowseFolder";
-            this.btnBrowseFolder.Size = new System.Drawing.Size(126, 25);
+            this.btnBrowseFolder.Size = new System.Drawing.Size(125, 25);
             this.btnBrowseFolder.TabIndex = 3;
             this.btnBrowseFolder.Text = "Set Output Directory";
             this.btnBrowseFolder.UseVisualStyleBackColor = true;
@@ -596,7 +596,7 @@ namespace ImageTypeConverter
         #endregion
 
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuAddSourceFiles;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;

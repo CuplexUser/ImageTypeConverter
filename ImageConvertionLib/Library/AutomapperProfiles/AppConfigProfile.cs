@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper;
 using ImageConverterLib.DataModels;
 using ImageConverterLib.Models;
+using Serilog;
 
 namespace ImageConverterLib.Library.AutomapperProfiles
 {
@@ -26,8 +27,8 @@ namespace ImageConverterLib.Library.AutomapperProfiles
                 .ForMember(s => s.FormPosition, o => o.MapFrom(d => d.FormPosition))
                 .ForMember(s => s.FormSize, o => o.MapFrom(d => d.FormSize))
                 .ForMember(s => s.WindowsState, o => o.MapFrom(d => d.WindowState))
-                .ReverseMap()
-                .ForMember(s => s.FormType, o => o.MapFrom(d => Type.GetType(d.FormName)));
+                .ReverseMap();
+                
 
             CreateMap<PointDataModel, Point>()
                 .ForMember(s => s.X, o => o.MapFrom(d => d.X))
@@ -43,6 +44,5 @@ namespace ImageConverterLib.Library.AutomapperProfiles
                 .ForMember(s => s.Height, o => o.MapFrom(d => d.Height))
                 .ForMember(s => s.Width, o => o.MapFrom(d => d.Width));
         }
-
     }
 }

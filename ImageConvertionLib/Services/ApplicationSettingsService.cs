@@ -54,7 +54,7 @@ namespace ImageConverterLib.Services
             {
                 if (_applicationSettings == null)
                 {
-                    LoadLocalStorageSettings();
+                    _applicationSettings = LoadLocalStorageSettings();
                 }
 
                 return _applicationSettings;
@@ -86,12 +86,9 @@ namespace ImageConverterLib.Services
             return loadedSuccessively;
         }
 
-
-
         private ApplicationSettingsModel LoadLocalStorageSettings()
         {
-            _appSettingsRepository.LoadSettings();
-
+            LoadSettings();
             return _applicationSettings;
         }
 

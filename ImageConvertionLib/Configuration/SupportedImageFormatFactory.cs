@@ -56,7 +56,7 @@ namespace ImageConverterLib.Configuration
         /// <summary>
         /// The img formats
         /// </summary>
-        private string[] _imgFormats = new string[] { "Jpeg", "Bmp", "Gif", "Png", "Tiff", "Webp" };
+        private string[] _imgFormats = new string[] { "Jpg", "Bmp", "Gif", "Png", "Tiff", "Webp" };
 
         /// <summary>
         /// Prevents a default instance of the <see cref="SupportedImageFormatFactory"/> class from being created.

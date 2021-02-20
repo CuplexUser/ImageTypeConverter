@@ -33,7 +33,7 @@ namespace ImageTypeConverter.UnitTest.Configuration
                     _testRunnerOutputPath = Path.GetFullPath(Assembly.GetExecutingAssembly().Location + "..\\..\\..\\TestDataInput");
                 }
 
-                return _tempDataPath;
+                return _testRunnerOutputPath;
             }
         }
 
@@ -44,6 +44,5 @@ namespace ImageTypeConverter.UnitTest.Configuration
         {
             GlobalSettings.Settings.UnitTestInitialize(TempDataPath);
         }
-
     }
 }
