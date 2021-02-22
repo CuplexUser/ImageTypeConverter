@@ -25,6 +25,8 @@ namespace ImageConverterLib.ImageProcessing.Encoding
             try
             {
                 var imgData = factory.Load(sourceModel.FilePath);
+
+                factory.Quality(85);
                 imgData.Format(GetOutputFormat(destinationModel));
                 imgData.Save(destinationModel.FilePath);
 

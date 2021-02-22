@@ -385,6 +385,12 @@ namespace ImageTypeConverter
             this.DataGridImgConvertQueue.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DataGridImgConvertQueue.Size = new System.Drawing.Size(397, 250);
             this.DataGridImgConvertQueue.TabIndex = 16;
+            this.DataGridImgConvertQueue.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragDrop);
+            this.DataGridImgConvertQueue.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragEnter);
+            this.DataGridImgConvertQueue.DragOver += new System.Windows.Forms.DragEventHandler(this.lstImageConvertQueue_DragOver);
+            this.DataGridImgConvertQueue.DragLeave += new System.EventHandler(this.lstImageConvertQueue_DragLeave);
+            this.DataGridImgConvertQueue.GiveFeedback += new System.Windows.Forms.GiveFeedbackEventHandler(this.lstImageConvertQueue_GiveFeedback);
+            this.DataGridImgConvertQueue.QueryContinueDrag += new System.Windows.Forms.QueryContinueDragEventHandler(this.lstImageConvertQueue_QueryContinueDrag);
             // 
             // Extension
             // 

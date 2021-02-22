@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using Autofac;
 using ImageConverterLib.Configuration;
 using ImageConverterLib.ImageProcessing.Models;
 using ImageConverterLib.Library;
@@ -37,11 +36,6 @@ namespace ImageTypeConverter
         private readonly ImageConverterService _converterService;
 
         /// <summary>
-        ///     The scope
-        /// </summary>
-        private readonly ILifetimeScope _scope;
-
-        /// <summary>
         ///     The user configuration service
         /// </summary>
         private readonly UserConfigService _userConfigService;
@@ -52,13 +46,11 @@ namespace ImageTypeConverter
         ///     Initializes a new instance of the <see cref="MainForm" /> class.
         /// </summary>
         /// <param name="applicationSettingsService">The application settings service.</param>
-        /// <param name="scope">The scope.</param>
         /// <param name="userConfigService">The user configuration service.</param>
         /// <param name="converterService"></param>
-        public MainForm(ApplicationSettingsService applicationSettingsService, ILifetimeScope scope, UserConfigService userConfigService, ImageConverterService converterService)
+        public MainForm(ApplicationSettingsService applicationSettingsService, UserConfigService userConfigService, ImageConverterService converterService)
         {
             _applicationSettingsService = applicationSettingsService;
-            _scope = scope;
             _userConfigService = userConfigService;
             _converterService = converterService;
             InitializeComponent();
@@ -87,16 +79,18 @@ namespace ImageTypeConverter
 
         private void UpdateControlStateFromUserConfig()
         {
-            if (lnkOutputDirectory.Text != _applicationSettingsService.Settings.OutputDirectory)
+            var settings = _applicationSettingsService.Settings;
+            if (lnkOutputDirectory.Text != settings.OutputDirectory)
             {
-                lnkOutputDirectory.Text = _applicationSettingsService.Settings.OutputDirectory;
+                lnkOutputDirectory.Text = settings.OutputDirectory;
                 lnkOutputDirectory.Links.Clear();
                 lnkOutputDirectory.Links.Add(0, lnkOutputDirectory.Text.Length, lnkOutputDirectory.Text);
             }
 
-            if (!string.IsNullOrEmpty(_applicationSettingsService.Settings.InputDirectory)) openFileDialog.InitialDirectory = _applicationSettingsService.Settings.InputDirectory;
+            if (!string.IsNullOrEmpty(settings.InputDirectory))
+                openFileDialog.InitialDirectory = settings.InputDirectory;
 
-            string setExtenstion = _applicationSettingsService.Settings.ImageFormatExtension;
+            string setExtenstion = settings.ImageFormatExtension;
             string selectedText = (cboxImageFormat.SelectedItem as ImageFormatModel).Extension;
             if (!string.IsNullOrEmpty(setExtenstion) && selectedText != setExtenstion)
             {
@@ -154,8 +148,8 @@ namespace ImageTypeConverter
 
             Text = Resources.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
             Log.Information($"Last Application Start time was: {_applicationSettingsService.Settings.LastAppStartTime.ToString("yyyy-MM-dd @ HH:mm:ss", CultureInfo.CurrentUICulture)}");
-            _applicationSettingsService.Settings.LastAppStartTime=DateTime.Now;
-            
+            _applicationSettingsService.Settings.LastAppStartTime = DateTime.Now;
+
             RestoreFormState(_applicationSettingsService.Settings);
         }
 
@@ -199,6 +193,12 @@ namespace ImageTypeConverter
         /// </summary>
         private void AddImagesUsingFileOpenDialog()
         {
+            var settings = _applicationSettingsService.Settings;
+            if (!string.IsNullOrEmpty(settings.InputDirectory) && Directory.Exists(settings.InputDirectory))
+            {
+                openFileDialog.InitialDirectory = settings.InputDirectory;
+            }
+
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 var selectedFiles = openFileDialog.FileNames.ToList();
@@ -218,7 +218,11 @@ namespace ImageTypeConverter
 
                 if (selectedFiles.Count > 0)
                 {
-                    _applicationSettingsService.Settings.InputDirectory = Path.GetDirectoryName(selectedFiles[selectedFiles.Count - 1]);
+                    string inputDir = settings.InputDirectory;
+                    settings.InputDirectory = Path.GetDirectoryName(selectedFiles[selectedFiles.Count - 1]);
+
+                    if (inputDir != settings.InputDirectory)
+                        _applicationSettingsService.SaveSettings();
                 }
 
                 imageModelBindingSource.SuspendBinding();
