@@ -2,6 +2,7 @@
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using Serilog;
 
 namespace SevenZip.Storage.Models
 {
@@ -45,12 +46,13 @@ namespace SevenZip.Storage.Models
             }
             set
             {
-                if (_password!=null && value)
-                    _useEncryption = true;
-                else
+                if (_password == null && value)
                 {
-                    _useEncryption = false;
+                    Log.Warning("UseEncryption requires a set password");
                 }
+
+                _useEncryption = value;
+
             }
         }
 
@@ -69,12 +71,13 @@ namespace SevenZip.Storage.Models
         {
             NumberOfThreads = Environment.ProcessorCount;
             UseMultithreading = true;
-            var storageManagerSettings = new  StorageManagerSettings(true, NumberOfThreads, pwdDefault);
+            InitDefault();
         }
 
         private void InitDefault()
         {
             _password = Encoding.UTF8.GetBytes(pwdDefault);
+            UseEncryption = true;
             SetProtectedPassword();
         }
 

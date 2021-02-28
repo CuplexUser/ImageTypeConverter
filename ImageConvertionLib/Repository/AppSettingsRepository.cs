@@ -34,6 +34,7 @@ namespace ImageConverterLib.Repository
                 InputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
                 OutputDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
                 LastAppStartTime = DateTime.Now,
+                JpegImageQuality = 85,
                 FormStateModels = new Dictionary<string, FormStateModel>()
             };
 

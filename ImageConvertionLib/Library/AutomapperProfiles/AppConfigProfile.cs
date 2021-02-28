@@ -12,12 +12,12 @@ namespace ImageConverterLib.Library.AutomapperProfiles
     {
         public AppConfigProfile()
         {
-
             CreateMap<ApplicationSettingsModel, ApplicationSettingsDataModel>()
                 .ForMember(s => s.ImageFormatExtension, o => o.MapFrom(d => d.ImageFormatExtension))
                 .ForMember(s => s.InputDirectory, o => o.MapFrom(d => d.InputDirectory))
                 .ForMember(s => s.LastAppStartTime, o => o.MapFrom(d => d.LastAppStartTime))
                 .ForMember(s => s.OutputDirectory, o => o.MapFrom(d => d.OutputDirectory))
+                .ForMember(s => s.JpegImageQuality, o => o.MapFrom(d => d.JpegImageQuality))
                 .ForMember(s => s.FormStateDataModels, o => o.MapFrom(d => d.FormStateModels.Values.ToList()))
                 .ReverseMap()
                 .ForMember(s => s.FormStateModels, o => o.MapFrom(d => d.FormStateDataModels.ToDictionary(x => x.FormName)));

@@ -127,14 +127,14 @@ namespace SevenZip.Storage
             Stream output = null;
             try
             {
-                output = new FileStream(path, FileMode.Create);
+                // Use Truncate to avoid https://stackoverflow.com/questions/2152978/using-protobuf-net-i-suddenly-got-an-exception-about-an-unknown-wire-type
+                output = new FileStream(path, FileMode.Truncate);
                 MemoryStream input = new MemoryStream();
 
                 var attrs = Attribute.GetCustomAttributes(obj.GetType());
                 bool protoBufferCompatible = attrs.OfType<DataContractAttribute>().Any();
 
-                if (progress != null)
-                    progress.Report(protoBufferCompatible ? new StorageManagerProgress { ProgressPercentage = 0, Text = "Serializing using Protobuffer" } : new StorageManagerProgress { ProgressPercentage = 0, Text = "Serializing using BinaryFormatter" });
+                progress?.Report(protoBufferCompatible ? new StorageManagerProgress { ProgressPercentage = 0, Text = "Serializing using Protobuffer" } : new StorageManagerProgress { ProgressPercentage = 0, Text = "Serializing using BinaryFormatter" });
 
                 if (protoBufferCompatible)
                     Serializer.NonGeneric.Serialize(input, obj);

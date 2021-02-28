@@ -45,9 +45,14 @@
                     throw new Exception("Password can not be null or empty");
 
                 if (File.Exists(filePath))
-                    File.Delete(filePath);
-
-                fs = File.Create(filePath);
+                {
+                    fs = new FileStream(filePath, FileMode.Truncate);
+                }
+                else
+                {
+                    fs = new FileStream(filePath, FileMode.CreateNew);
+                }
+                // fs = new FileStream(filePath, FileMode.Truncate); //File.Create(filePath);
 
                 if (progress != null)
                 {

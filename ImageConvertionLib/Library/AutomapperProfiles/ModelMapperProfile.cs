@@ -24,15 +24,6 @@ namespace ImageConverterLib.Library.AutomapperProfiles
                 .ReverseMap()
                 .ConstructUsing(x => ImageModel.CreateImageModel(x.FilePath));
 
-                      //.ForMember(s => s.SortOrder, o => o.MapFrom(d => d.SortOrder))
-                      //.ForMember(s => s.Extension, o => o.MapFrom(d => d.Extension))
-                      //.ForMember(s => s.FilePath, o => o.MapFrom(d => d.FilePath))
-                      //.ForMember(s => s.FileName, o => o.MapFrom(d => d.FileName))
-                      //.ForMember(s => s.FileSize, o => o.MapFrom(d => d.FileSize))
-                      //.ReverseMap();
-            
-                      
-
             CreateMap<UserConfigModel, UserConfigDataModel>()
                 .ForMember(s => s.ImageDataModels, o => o.MapFrom(d => d.ImageModels))
                 .ForMember(s => s.OutputFileExtension, o => o.MapFrom(d => d.OutputFileExtension))

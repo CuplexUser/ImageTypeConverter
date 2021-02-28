@@ -16,6 +16,7 @@ namespace ImageConverterLib.Providers
         {
             InstanceId = Guid.NewGuid();
             var settings = new StorageManagerSettings();
+
             _storageManager = new StorageManager(settings);
         }
 

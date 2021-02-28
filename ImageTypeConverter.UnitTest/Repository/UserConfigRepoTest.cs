@@ -29,9 +29,5 @@ namespace ImageTypeConverter.UnitTest.Repository
 
         }
 
-
-
-
-
     }
 }

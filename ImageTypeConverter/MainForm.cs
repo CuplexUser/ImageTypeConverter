@@ -550,7 +550,16 @@ namespace ImageTypeConverter
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var settingsForm = new SettingsForm();
-            settingsForm.ShowDialog(this);
+            settingsForm.Init(_applicationSettingsService);
+            var result = settingsForm.ShowDialog(this);
+            if (result == DialogResult.OK)
+            {
+                bool saveSuccessful= _applicationSettingsService.SaveSettings();
+                if (!saveSuccessful)
+                {
+                    Log.Warning("Failed to save ApplicationSettingsModel after SettingsForm update");
+                }
+            }
             settingsForm.Dispose();
         }
 

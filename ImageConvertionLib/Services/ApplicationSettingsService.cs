@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using ImageConverterLib.Helpers;
 using ImageConverterLib.Models;
 using ImageConverterLib.Repository;
 using JetBrains.Annotations;
@@ -101,15 +103,21 @@ namespace ImageConverterLib.Services
             }
 
         }
+
+        public static ModelValidator CreateModelValidator(ApplicationSettingsModel model)
+        {
+            var modelValidator = new ModelValidator(model);
+            return modelValidator;
+        }
+
         public bool SaveSettings()
         {
-            bool result = true;
+            bool result;
 
             if (_applicationSettings == null)
             {
                 throw new InvalidOperationException("Cant save uninitialized Null settings");
             }
-
 
             try
             {

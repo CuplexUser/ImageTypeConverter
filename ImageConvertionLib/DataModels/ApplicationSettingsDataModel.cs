@@ -47,12 +47,21 @@ namespace ImageConverterLib.DataModels
         public DateTime LastAppStartTime { get; set; }
 
         /// <summary>
+        /// Gets or sets the JPEG image quality.
+        /// </summary>
+        /// <value>
+        /// The JPEG image quality.
+        /// </value>
+        [DataMember(Name = "JpegImageQuality", Order = 5)]
+        public int JpegImageQuality { get; set; }
+
+        /// <summary>
         /// Gets or sets the form state data models.
         /// </summary>
         /// <value>
         /// The form state data models.
         /// </value>
-        [DataMember(Name = "FormStateDataModels", Order = 5)]
+        [DataMember(Name = "FormStateDataModels", Order = 6)]
         public IList<FormStateDataModel> FormStateDataModels { get; set; }  
     }
 }

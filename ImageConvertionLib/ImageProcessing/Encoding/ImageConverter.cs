@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ImageConverterLib.ImageProcessing.Models;
+using ImageConverterLib.Models;
 using ImageProcessor;
 using ImageProcessor.Configuration;
 using ImageProcessor.Imaging.Formats;
@@ -13,9 +14,11 @@ namespace ImageConverterLib.ImageProcessing.Encoding
     {
         private readonly ImageFactory factory;
 
-        public ImageConverter()
-        {
+        private readonly ApplicationSettingsModel applicationSettings;
 
+        public ImageConverter(ApplicationSettingsModel applicationSettings)
+        {
+            this.applicationSettings = applicationSettings;
             ImageProcessorBootstrapper.Instance.AddImageFormats(new WebPFormat());
             factory = new ImageFactory();
         }
@@ -26,7 +29,7 @@ namespace ImageConverterLib.ImageProcessing.Encoding
             {
                 var imgData = factory.Load(sourceModel.FilePath);
 
-                factory.Quality(85);
+                factory.Quality(applicationSettings.JpegImageQuality);
                 imgData.Format(GetOutputFormat(destinationModel));
                 imgData.Save(destinationModel.FilePath);
 

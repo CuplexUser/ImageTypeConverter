@@ -22,16 +22,16 @@ namespace SevenZip.Hashing
             _checksumProgress = new ChecksumProgress();
         }
 
-        public void GenrateSFVFileAsync(StringCollection filePathCollection, string sfvFilename)
+        public void GenerateSFVFileAsync(StringCollection filePathCollection, string sfvFilename)
         {
-            new Task(() => GenrateSFVFile(filePathCollection, sfvFilename)).Start();
+            new Task(() => GenerateSFVFile(filePathCollection, sfvFilename)).Start();
         }
 
-        public void GenrateSFVFile(StringCollection filePathCollection, string sfvFilename)
+        public void GenerateSFVFile(StringCollection filePathCollection, string sfvFilename)
         {
-            using (var fs = File.Create(sfvFilename))
+            using (var fs = new FileStream(sfvFilename, FileMode.Truncate))
             {
-                var CRC32HashImplemenation = new CRC32();
+                var CRC32HashImplementation = new CRC32();
 
                 // Write Header
                 var sw = new StreamWriter(fs);
@@ -40,8 +40,7 @@ namespace SevenZip.Hashing
                 _checksumProgress.FilesTotal = filePathCollection.Count;
                 _checksumProgress.Text = "Generating SFV file header";
 
-                if (_progress != null)
-                    _progress.Report(_checksumProgress);
+                _progress?.Report(_checksumProgress);
 
                 foreach (string filename in filePathCollection)
                 {
@@ -60,8 +59,7 @@ namespace SevenZip.Hashing
                 {
                     _checksumProgress.Text = "Processing file: " + filename;
 
-                    if (_progress != null)
-                        _progress.Report(_checksumProgress);
+                    _progress?.Report(_checksumProgress);
 
                     var fileInfo = new FileInfo(filename);
 
@@ -69,7 +67,7 @@ namespace SevenZip.Hashing
                         continue;
                     try
                     {
-                        string hexChecksum = GeneralConverters.ByteArrayToHexString(CRC32HashImplemenation.ComputeHash(fileInfo.OpenRead()));
+                        string hexChecksum = GeneralConverters.ByteArrayToHexString(CRC32HashImplementation.ComputeHash(fileInfo.OpenRead()));
                         sw.WriteLine(GeneralConverters.GetFileNameFromPath(filename) + " " + hexChecksum);
                         _checksumProgress.DataRead = _checksumProgress.DataRead + fileInfo.Length;
                     }
@@ -82,8 +80,7 @@ namespace SevenZip.Hashing
                     _checksumProgress.FilesCompleted = _checksumProgress.FilesCompleted + 1;
                     _checksumProgress.TotalProgress = _checksumProgress.FilesCompleted * 100 / _checksumProgress.FilesTotal;
 
-                    if (_progress != null)
-                        _progress.Report(_checksumProgress);
+                    _progress?.Report(_checksumProgress);
                 }
 
                 fs.Flush();
@@ -99,16 +96,16 @@ namespace SevenZip.Hashing
             }
         }
 
-        public void GenrateMD5FileAsync(StringCollection filePathCollection, string sfvFilename)
+        public void GenerateMD5FileAsync(StringCollection filePathCollection, string sfvFilename)
         {
-            new Task(() => GenrateMD5File(filePathCollection, sfvFilename)).Start();
+            new Task(() => GenerateMD5File(filePathCollection, sfvFilename)).Start();
         }
 
-        public void GenrateMD5File(StringCollection filePathCollection, string sfvFilename)
+        public void GenerateMD5File(StringCollection filePathCollection, string sfvFilename)
         {
             using (var fs = File.Create(sfvFilename))
             {
-                var MD5HashImplemenation = new MD5();
+                var MD5HashImplementation = new MD5();
 
                 // Write Header
                 var sw = new StreamWriter(fs);
@@ -117,8 +114,7 @@ namespace SevenZip.Hashing
                 _checksumProgress.FilesTotal = filePathCollection.Count;
                 _checksumProgress.Text = "Generating MD5 file header";
 
-                if (_progress != null)
-                    _progress.Report(_checksumProgress);
+                _progress?.Report(_checksumProgress);
 
                 foreach (string filename in filePathCollection)
                 {
@@ -137,8 +133,7 @@ namespace SevenZip.Hashing
                 {
                     _checksumProgress.Text = "Processing file: " + filename;
 
-                    if (_progress != null)
-                        _progress.Report(_checksumProgress);
+                    _progress?.Report(_checksumProgress);
 
                     var fileInfo = new FileInfo(filename);
 
@@ -146,7 +141,7 @@ namespace SevenZip.Hashing
                         continue;
                     try
                     {
-                        string hexChecksum = GeneralConverters.ByteArrayToHexString(MD5HashImplemenation.ComputeHash(fileInfo.OpenRead()));
+                        string hexChecksum = GeneralConverters.ByteArrayToHexString(MD5HashImplementation.ComputeHash(fileInfo.OpenRead()));
                         sw.WriteLine(hexChecksum + " *" + GeneralConverters.GetFileNameFromPath(filename));
                         _checksumProgress.DataRead = _checksumProgress.DataRead + fileInfo.Length;
                     }
@@ -159,8 +154,7 @@ namespace SevenZip.Hashing
                     _checksumProgress.FilesCompleted = _checksumProgress.FilesCompleted + 1;
                     _checksumProgress.TotalProgress = _checksumProgress.FilesCompleted * 100 / _checksumProgress.FilesTotal;
 
-                    if (_progress != null)
-                        _progress.Report(_checksumProgress);
+                    _progress?.Report(_checksumProgress);
                 }
 
                 sw.Flush();

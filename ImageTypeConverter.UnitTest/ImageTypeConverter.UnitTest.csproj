@@ -74,6 +74,9 @@
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Diagnostics.DiagnosticSource, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Diagnostics.DiagnosticSource.5.0.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
@@ -96,6 +99,7 @@
   <ItemGroup>
     <Compile Include="Configuration\AutofacConfig.cs" />
     <Compile Include="Configuration\GlobalUnitTestConfig.cs" />
+    <Compile Include="DataAnnotationTest\DataAnnotationTest.cs" />
     <Compile Include="Provider\CryptoTest.cs" />
     <Compile Include="Provider\FileSystemTest.cs" />
     <Compile Include="Repository\AppSettingsRepoTest.cs" />
@@ -122,9 +126,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Compare\" />
-    <Folder Include="ObjectMapping\" />
-    <Folder Include="TempOutput\" />
-    <Folder Include="TestDataInput\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

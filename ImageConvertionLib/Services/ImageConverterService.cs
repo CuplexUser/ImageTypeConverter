@@ -9,6 +9,7 @@ using ImageConverterLib.ImageProcessing.Encoding;
 using ImageConverterLib.ImageProcessing.Models;
 using ImageConverterLib.Library;
 using ImageConverterLib.Models;
+using ImageConverterLib.Repository;
 using Serilog;
 
 namespace ImageConverterLib.Services
@@ -17,20 +18,21 @@ namespace ImageConverterLib.Services
     {
         private readonly ILifetimeScope _scope;
         private readonly IMapper _mapper;
+        private readonly AppSettingsRepository _appSettingsRepository;
         private List<BatchItemModel> _batchItems;
         private CancellationTokenSource _cancellationTokenSource;
         private CancellationToken _cancellationToken;
         private BatchWorkflowProgress _progress;
         private bool runWorkerThread = true;
         private Task _mainTask;
-        private object lockObject = new object();
 
         public event BatchCompletedEventHandler OnBatchCompleted;
 
-        public ImageConverterService(ILifetimeScope scope, IMapper mapper)
+        public ImageConverterService(ILifetimeScope scope, IMapper mapper, AppSettingsRepository appSettingsRepository)
         {
             _scope = scope;
             _mapper = mapper;
+            _appSettingsRepository = appSettingsRepository;
             _batchItems = new List<BatchItemModel>();
             _cancellationTokenSource = new CancellationTokenSource();
             IsRunningBatch = false;
@@ -132,7 +134,7 @@ namespace ImageConverterLib.Services
         private bool ProcessBatchTaskRunner()
         {
             var starTime = DateTime.Now;
-            var converter = new ImageConverter();
+            var converter = new ImageConverter(_appSettingsRepository.LoadSettings());
             int index = 1;
             int filesToConvert = _batchItems.Count;
             foreach (var batchItem in _batchItems)
