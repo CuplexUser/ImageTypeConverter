@@ -73,8 +73,6 @@ namespace ImageTypeConverter
 
             openFileDialog.Filter = "WEBP Images (*.webp)|*.webp|Tif images (*.tiff;*.tif)|*.tiff;*.tif|Jpeg Images (*.jpg; *.jpeg)|*.jpg;*.jpeg|Png Images (*.png)|*.png|Bitmap Images (*.bmp)|*.bmp|" +
                                     "All files (*.*)|*.*";
-
-            UpdateControlStateFromUserConfig();
         }
 
         private void UpdateControlStateFromUserConfig()
@@ -129,12 +127,19 @@ namespace ImageTypeConverter
 
         private void SelectOutputDir()
         {
-            folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
+            if (!string.IsNullOrEmpty(_applicationSettingsService.Settings.OutputDirectory))
+                folderBrowserDialog.SelectedPath = _applicationSettingsService.Settings.OutputDirectory;
+
             if (folderBrowserDialog.ShowDialog(this) == DialogResult.OK)
             {
                 _userConfigService.SetOutputFolder(folderBrowserDialog.SelectedPath);
-                _applicationSettingsService.Settings.OutputDirectory = folderBrowserDialog.SelectedPath;
-                UpdateControlStateFromUserConfig();
+
+                if (folderBrowserDialog.SelectedPath != _applicationSettingsService.Settings.OutputDirectory)
+                {
+                    _applicationSettingsService.Settings.OutputDirectory = folderBrowserDialog.SelectedPath;
+                    _applicationSettingsService.SaveSettings();
+                    UpdateControlStateFromUserConfig();
+                }
             }
         }
 
@@ -149,6 +154,7 @@ namespace ImageTypeConverter
             Text = Resources.MainTitle + $" - Version {Assembly.GetExecutingAssembly().GetName().Version}";
             Log.Information($"Last Application Start time was: {_applicationSettingsService.Settings.LastAppStartTime.ToString("yyyy-MM-dd @ HH:mm:ss", CultureInfo.CurrentUICulture)}");
             _applicationSettingsService.Settings.LastAppStartTime = DateTime.Now;
+            _applicationSettingsService.SaveSettings();
 
             RestoreFormState(_applicationSettingsService.Settings);
         }

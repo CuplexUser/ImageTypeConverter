@@ -576,7 +576,6 @@ namespace ImageTypeConverter
             this.Controls.Add(this.menuMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuMain;
-            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(835, 430);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

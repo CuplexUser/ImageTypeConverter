@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using ImageConverterLib.Helpers;
 using ImageConverterLib.Models;
@@ -10,15 +11,9 @@ using Serilog;
 
 namespace ImageConverterLib.Services
 {
-    [UsedImplicitly]
-    public sealed class ApplicationSettingsService : ServiceBase
+    public class ApplicationSettingsService : ServiceBase
     {
-
         private readonly AppSettingsRepository _appSettingsRepository;
-
-        public string CompanyName { get; } = Application.CompanyName;
-
-        public string ProductName { get; } = Application.ProductName;
         private ApplicationSettingsModel _applicationSettings;
 
         public ApplicationSettingsService(AppSettingsRepository appSettingsRepository)
@@ -47,7 +42,7 @@ namespace ImageConverterLib.Services
 
         public void SetSettingsStateModified()
         {
-            
+
         }
 
         public ApplicationSettingsModel Settings
@@ -63,7 +58,7 @@ namespace ImageConverterLib.Services
             }
             private set => _applicationSettings = value;
         }
-           
+
 
         public event EventHandler OnSettingsLoaded;
         public event EventHandler OnSettingsSaved;
@@ -75,8 +70,8 @@ namespace ImageConverterLib.Services
 
             try
             {
-
                 _applicationSettings = _appSettingsRepository.LoadSettings();
+                ValidateSettings();
                 OnSettingsLoaded?.Invoke(this, EventArgs.Empty);
                 loadedSuccessively = true;
             }
@@ -94,6 +89,28 @@ namespace ImageConverterLib.Services
             return _applicationSettings;
         }
 
+        private void ValidateSettings()
+        {
+            var defSettings = AppSettingsRepository.GetDefaultApplicationSettings();
+            ModelValidator validator = new ModelValidator(_applicationSettings);
+            if (!validator.ValidateModel())
+            {
+                Log.Warning("Loaded application settings are invalid. {ErrorMessage}", validator.ValidationResults.First().ErrorMessage);
+                if (_applicationSettings.JpegImageQuality < 50 || _applicationSettings.JpegImageQuality > 100)
+                {
+                    _applicationSettings.JpegImageQuality = defSettings.JpegImageQuality;
+                    Log.Debug("JpegImageQuality was invalid. Value changed to: {JpegImageQuality}", _applicationSettings.JpegImageQuality);
+                }
+
+                if (string.IsNullOrEmpty(_applicationSettings.InputDirectory))
+                {
+                    _applicationSettings.InputDirectory = defSettings.InputDirectory;
+                    Log.Debug("InputDirectory was invalid. Value changed to: {InputDirectory}", _applicationSettings.InputDirectory);
+                }
+
+                SaveSettings();
+            }
+        }
 
         private void _appSettingsFileRepository_LoadSettingsCompleted(object sender, EventArgs e)
         {
@@ -101,7 +118,6 @@ namespace ImageConverterLib.Services
             {
                 _applicationSettings = new ApplicationSettingsModel();
             }
-
         }
 
         public static ModelValidator CreateModelValidator(ApplicationSettingsModel model)

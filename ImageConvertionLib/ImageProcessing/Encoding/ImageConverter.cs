@@ -69,9 +69,6 @@ namespace ImageConverterLib.ImageProcessing.Encoding
                     return new GifFormat();
                 case ".webp":
                     return new WebPFormat();
-
-                default:
-                    break;
             }
 
 
